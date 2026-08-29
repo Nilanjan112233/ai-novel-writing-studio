@@ -1,0 +1,35 @@
+# Runtime and local configuration
+.env
+.env.local
+backend/.env
+frontend/.env.local
+*.pid
+*.log
+.novelforge-ports.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node and Next.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Test and generated artifacts
+playwright-report/
+test-results/
+artifacts/
+exports/
+backend/exports/
+coverage/
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
