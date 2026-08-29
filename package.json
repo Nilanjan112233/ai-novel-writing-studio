@@ -1,0 +1,32 @@
+{
+  "name": "novelforge",
+  "version": "2.0.0-rc9",
+  "description": "Local, author-controlled narrative intelligence studio",
+  "scripts": {
+    "dev": "tsx scripts/dev.ts",
+    "test": "npm run test:frontend && npm run test:backend",
+    "build": "npm run build --prefix frontend",
+    "test:backend": "cd backend && py -3.11 -m pytest --ignore=test-output-focused.txt",
+    "test:frontend": "npm run test --prefix frontend -- --run",
+    "test:e2e": "npx playwright test",
+    "lint": "npm run lint --prefix frontend",
+    "health": "tsx scripts/health-check.ts",
+    "healthcheck": "tsx scripts/health-check.ts",
+    "beta:start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-beta.ps1",
+    "beta:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-beta.ps1",
+    "beta:status": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/status-beta.ps1",
+    "beta:backup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backup-before-update.ps1",
+    "postinstall": "npx playwright install chromium"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.8.6",
+    "tsx": "^4.19.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "mongodb": "^6.3.0"
+  }
+}
