@@ -1,0 +1,67 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: novelforge-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: novelforge
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 15s
+      retries: 12
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: novelforge-backend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+      DATABASE_NAME: novelforge
+      USE_MOCK_LLM: "false"
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      TRUSTED_HOSTS: localhost,127.0.0.1,backend
+      SETTINGS_KEY_FILE: /app/data/settings.key
+      BACKUP_DIRECTORY: /app/data/backups
+      SUPPORT_BUNDLE_DIRECTORY: /app/data/support
+      PUBLICATION_EXPORT_DIRECTORY: /app/data/exports
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - backend_secret_data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=5)"]
+      interval: 5s
+      timeout: 6s
+      retries: 30
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: novelforge-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  mongodb_data:
+  backend_secret_data:
