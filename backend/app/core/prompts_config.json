@@ -1,0 +1,32 @@
+{
+  "dialogue_rewrite": {
+    "current_version": "v1",
+    "templates": {
+      "v1": "dialogue_v1.jinja"
+    }
+  },
+  "edit": {
+    "current_version": "v1",
+    "templates": {
+      "v1": "edit_v1.jinja"
+    }
+  },
+  "emotion": {
+    "current_version": "v1",
+    "templates": {
+      "v1": "emotion_v1.jinja"
+    }
+  },
+  "paragraph_expansion": {
+    "current_version": "v1",
+    "templates": {
+      "v1": "expansion_v1.jinja"
+    }
+  },
+  "style": {
+    "current_version": "v1",
+    "templates": {
+      "v1": "style_v1.jinja"
+    }
+  }
+}
