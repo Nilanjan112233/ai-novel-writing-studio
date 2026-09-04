@@ -23,56 +23,114 @@ class ProviderHealthService:
         day = utc_day()
         now = datetime.utcnow()
         await db.provider_health.update_one(
-     ÛÍ|¶‰Ëkºwµç\‹[Ù[ÚYˆİŠHOˆÜ[Û˜[Ó[Ù[[™›×N‚ˆ›Ü›X[^™YH›Ü›X[^™WÜ›İšY\Š›İšY\ŠBˆYˆ›Ü›X[^™Y[ˆÈ›[ØÚÈ‹›Û[XHŸN‚ˆ™]\›ˆ™^
+            {"provider": provider},
+            {
+                "$set": {
+                    "provider": provider,
+                    "status": "online",
+                    "active_model": model,
+                    "last_success_at": now,
+                    "last_latency_ms": latency_ms,
+                    "last_error": None,
+                    "updated_at": now,
+                },
+                "$inc": {"success_count": 1},
+            },
+            upsert=True,
+        )
+        await db.provider_quota_usage.update_one(
+            {"provider": provider, "day": day},
+            {
+                "$set": {"provider": provider, "day": day, "updated_at": now},
+                "$inc": {"requests": 1, "tokens": tokens_used, "estimated_cost_usd": cost_usd},
+            },
+            upsert=True,
+        )
 
-[Ù[›Üˆ[Ù[[ˆÙ[‹˜İ\˜]YÛ[Ù[Ê›Ü›X[^™Y
-HYˆ[Ù[›[Ù[ÚYOH[Ù[ÚY
-K›Û™JBˆØİ[Y[H]ØZ]]X˜\ÙK™Ù]ÙŠ
-Kœ›İšY\—Û[Ù[Ë™š[™ÛÛ™JˆÈœ›İšY\ˆˆ›Ü›X[^™Y›[Ù[ÚYˆ[Ù[ÚYBˆ
-Bˆ™]\›ˆÛ[Ù[Ú[™›Ê›Ü›X[^™YØİ[Y[
-HYˆØİ[Y[[ÙH›Û™B‚ˆ\Ş[˜ÈYˆÙ]Û[Ù[
-Ù[‹›İšY\ˆİ‹[Ù[ÚYˆİŠHOˆÜ[Û˜[Ó[Ù[[™›×N‚ˆ\ØÛİ™\™YH]ØZ]Ù[‹™Ù]Ù\ØÛİ™\™YÛ[Ù[
-›İšY\‹[Ù[ÚY
-BˆYˆ\ØÛİ™\™Y‚ˆ™]\›ˆ\ØÛİ™\™Yˆ›Ü›X[^™YH›Ü›X[^™WÜ›İšY\Š›İšY\ŠBˆ™]\›ˆ™^
+    async def record_failure(self, db, provider: str, model: str, error_type: str, message: str) -> None:
+        """A model failure can degrade a provider, but never marks it offline."""
+        now = datetime.utcnow()
+        await db.provider_health.update_one(
+            {"provider": provider},
+            {
+                "$set": {
+                    "provider": provider,
+                    "status": "degraded",
+                    "active_model": model,
+                    "last_error": {"type": error_type, "message": message, "created_at": now},
+                    "updated_at": now,
+                },
+                "$inc": {"failure_count": 1},
+            },
+            upsert=True,
+        )
 
-[Ù[›Üˆ[Ù[[ˆÙ[‹˜İ\˜]YÛ[Ù[Ê›Ü›X[^™Y
-HYˆ[Ù[›[Ù[ÚYOH[Ù[ÚY
-K›Û™JB‚ˆ\Ş[˜ÈYˆ˜[Y]WÙ\ØÛİ™\™YÛ[Ù[
-Ù[‹›İšY\ˆİ‹[Ù[ÚYˆİŠHOˆ[Ù[[™›Î‚ˆ[Ù[H]ØZ]Ù[‹™Ù]Ù\ØÛİ™\™YÛ[Ù[
-›İšY\‹[Ù[ÚY
-BˆYˆ›İ[Ù[‚ˆ˜Z\ÙH˜[YQ\œ›ÜŠˆˆ’S•SQÓSÑSˆÛ›Ü›X[^™WÜ›İšY\Š›İšY\Š_H[Ù[	ŞÛ[Ù[ÚYIÈ\È›İ™Y[ˆ\ØÛİ™\™Y‚ˆ
-Bˆ™]\›ˆ[Ù[‚ˆ\Ş[˜ÈYˆ˜[Y]WÛ[Ù[
-Ù[‹›İšY\ˆİ‹[Ù[ÚYˆİŠHOˆ[Ù[[™›Î‚ˆˆˆ”™\Ù\™HØ]™Y[[YH\ÜÚYÛ›Y[ÈÚ[H\ØÛİ™\KX˜XÚÙYRH™\XÙ\È[Kˆˆˆ‚ˆ[Ù[H]ØZ]Ù[‹™Ù]Û[Ù[
-›İšY\‹[Ù[ÚY
-BˆYˆ›İ[Ù[‚ˆ˜Z\ÙH˜[YQ\œ›ÜŠˆ’S•SQÓSÑSˆÛ›Ü›X[^™WÜ›İšY\Š›İšY\Š_HÙ\È›İİ\Ü[Ù[	ŞÛ[Ù[ÚYIÈŠBˆ™]\›ˆ[Ù[‚ˆ\Ş[˜ÈYˆÙ]İ˜[Y][Û—Ü™\İ[ÊÙ[‹›İšY\ˆİˆ›Û™HH›Û™JHOˆ\İÑXİÜİ‹[WWN‚ˆ›Ü›X[^™YH›Ü›X[^™WÜ›İšY\Š›İšY\ˆÜˆˆŠBˆ]Y\HHÈœ›İšY\ˆˆ›Ü›X[^™YHYˆ›Ü›X[^™Y[ÙHßBˆˆH]X˜\ÙK™Ù]ÙŠ
-Bˆ™\İ[ÈH]ØZ]‹œ›İšY\—Û[Ù[ÚX[™š[™
-]Y\JKœÛÜ
-›\İØÚXÚÙY‹LJK×Û\İ
-[™İML
-Bˆ\ØÛİ™\™YHÂˆ
-[Ù[œ›İšY\‹[Ù[›[Ù[ÚY
-Bˆ›Üˆ[Ù[[ˆ]ØZ]Ù[‹™Ù]Û[Ù[Ê›Ü›X[^™YÜˆ›Û™JBˆBˆ™\İ[ÈHÂˆ][H›Üˆ][H[ˆ™\İ[ÂˆYˆ
-][K™Ù]
-œ›İšY\ˆŠK][K™Ù]
-›[Ù[ŠJH[ˆ\ØÛİ™\™YˆBˆ›Üˆ][H[ˆ™\İ[Î‚ˆ][VÈ—ÚY—HHİŠ][VÈ—ÚY—JBˆ][VÈÛÜšÚ[™È—HH›ÛÛ
-][K™Ù]
-œİXØÙ\ÜÈŠJBˆ][VÈ›][˜ŞWÛ\È—HH][K™Ù]
-›][˜ŞHŠBˆ][VÈ\İYØ]—HH][K™Ù]
-›\İØÚXÚÙYŠBˆ][VÈ™\œ›Ü—ÛY\ÜØYÙH—HH][K™Ù]
-™\œ›ÜˆŠBˆ][VÈœİ\Ü×ÚœÛÛˆ—HH˜[ÙBˆ][VÈœİ\Ü×Üİ™X[Z[™È—HH˜[ÙBˆ™]\›ˆ™\İ[Â‚ˆ\Ş[˜ÈYˆÙ]İ™\šYšYYÛ[Ù[ÊÙ[‹›İšY\ˆİˆ›Û™HH›Û™JHOˆ\İÓ[Ù[[™›×N‚ˆ›Ü›X[^™YH›Ü›X[^™WÜ›İšY\Š›İšY\ˆÜˆˆŠBˆˆH]X˜\ÙK™Ù]ÙŠ
-Bˆ]Y\NˆXİÜİ‹[WHHÈœİXØÙ\ÜÈˆY_BˆYˆ›Ü›X[^™Y‚ˆ]Y\VÈœ›İšY\ˆ—HH›Ü›X[^™Yˆ˜[Y][ÛœÈH]ØZ]‹œ›İšY\—Û[Ù[ÚX[™š[™
-]Y\JKœÛÜ
-›][˜ŞH‹JK×Û\İ
-[™İML
-Bˆ[Ù[Îˆ\İÓ[Ù[[™›×HH×BˆÙY[ˆÙ]İ\VÜİ‹İ—WHHÙ]
+    async def health_snapshot(self, db) -> list[Dict[str, Any]]:
+        discovery = await db.provider_status.find().to_list(length=100)
+        runtime = await db.provider_health.find().to_list(length=100)
+        usage = await db.provider_quota_usage.find({"day": utc_day()}).to_list(length=100)
+        validations = await db.provider_model_health.find().to_list(length=5000)
 
-Bˆ›Üˆ˜[Y][Ûˆ[ˆ˜[Y][ÛœÎ‚ˆÙ^HH
-˜[Y][Û‹™Ù]
-œ›İšY\ˆ‹ˆŠK˜[Y][Û‹™Ù]
-›[Ù[‹ˆŠJBˆYˆÙ^H[ˆÙY[‚ˆÛÛ[YBˆÙY[‹˜Y
-Ù^JBˆ[Ù[H]ØZ]Ù[‹™Ù]Ù\ØÛİ™\™YÛ[Ù[
+        providers = {
+            item.get("provider")
+            for group in (discovery, runtime, validations)
+            for item in group
+            if item.get("provider")
+        }
+        usage_by_provider = {item.get("provider"): item for item in usage}
+        discovery_by_provider = {item.get("provider"): item for item in discovery}
+        runtime_by_provider = {item.get("provider"): item for item in runtime}
 
-šÙ^JBˆYˆ[Ù[‚ˆ[Ù[Ë˜\[™
-[Ù[
-Bˆ™]\›ˆ[Ù[Â‚‚›[Ù[Ü™YÚ\İWÜÙ\šXÙHH[Ù[™YÚ\İTÙ\šXÙJ
-B‚—×Ø[×ÈHÈ“[Ù[[™›È‹›[Ù[Ü™YÚ\İWÜÙ\šXÙH‹››Ü›X[^™WÜ›İšY\ˆ—B
+        snapshot: list[Dict[str, Any]] = []
+        for provider in sorted(providers):
+            if provider == "mock" and not app_config.use_mock_llm:
+                continue
+            discovered = discovery_by_provider.get(provider, {})
+            health = runtime_by_provider.get(provider, {})
+            discovery_succeeded = discovered.get("discovery_succeeded")
+            if discovery_succeeded is False:
+                status = "offline"
+            elif discovery_succeeded is True:
+                status = "online"
+            else:
+                status = health.get("status", "online") if provider in {"mock", "ollama"} else "untested"
+
+            failed_models = [
+                item for item in validations
+                if item.get("provider") == provider and item.get("success") is False
+            ]
+            working_models = [
+                item for item in validations
+                if item.get("provider") == provider and item.get("success") is True
+            ]
+            if status == "online" and failed_models:
+                status = "degraded"
+
+            daily = {
+                key: value
+                for key, value in usage_by_provider.get(
+                    provider,
+                    {"requests": 0, "tokens": 0, "estimated_cost_usd": 0},
+                ).items()
+                if key != "_id"
+            }
+            item = {
+                **{key: value for key, value in health.items() if key != "_id"},
+                **{key: value for key, value in discovered.items() if key != "_id"},
+                "provider": provider,
+                "status": status,
+                "daily_usage": daily,
+                "failed_model_count": len(failed_models),
+                "working_model_count": len(working_models),
+            }
+            if discovered.get("error"):
+                item["last_error"] = {
+                    "type": discovered.get("error_type", "PROVIDER_UNAVAILABLE"),
+                    "message": discovered["error"],
+                    "created_at": discovered.get("checked_at"),
+                }
+            snapshot.append(item)
+        return snapshot
+
+
+provider_health_service = ProviderHealthService()
