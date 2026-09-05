@@ -228,4 +228,188 @@ class SettingsService:
             "providers": providers,
             "fallback_priority": settings.get("fallback_priority", []),
             "llm_delay_seconds": settings.get("llm_delay_seconds", 5),
-            "memory": self._puÛ7ÖÚ$z{-®éÜj×€€€É”¹%9=IM°(€€€€€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€€€€€€€€€™¥ÉÍÑ}Á•ÉÍ½¹}±•…¬€ô…ÑÕ…±}Á•ÉÍ½¸€ôô€‰™¥ÉÍÐÁ•ÉÍ½¸ˆ(€€€€€€€€€€€€€€€€€€€¥˜€¡­¹½Ý±•‘•}Ù•Éˆ½È™¥ÉÍÑ}Á•ÉÍ½¹}±•…¬¤…¹¹½Ð}•áÁ±¥¥Ñ±å}Á±…¹¹•‘}¡…¹”¡‘É…™Ð°€‰±•…É¸ˆ°Ñ¥Ñ±”¹±½Ý•È ¤¤è(€€€€€€€€€€€€€€€€€€€€€€€…‘‘}™¥¹‘¥¹œ (€€€€€€€€€€€€€€€€€€€€€€€€€€€€‰¡…É…Ñ•É}­¹½Ý±•‘•}±•…­…”ˆ°(€€€€€€€€€€€€€€€€€€€€€€€€€€€˜‰Q¡”‘É…™ÐÁÉ•Í•¹ÑÌíÑ¥Ñ±”½È€É•ÍÑÉ¥Ñ•¥¹™½Éµ…Ñ¥½¸ô…Ì­¹½Ý¸‰äíÁ½Ù}¡…É…Ñ•Éô‰•™½É”Ñ¡”­¹½Ý±•‘”±•‘•ÈÁ•Éµ¥ÑÌ¥Ð¸ˆ°(€€€€€€€€€€€€€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹}­•äô‰µ¥ÍÍ¥¹}­¹½Ý±•‘”ˆ°(€€€€€€€€€€€€€€€€€€€€€€€€€€€•Ù¥‘•¹”õì(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€‰•¹ÑÉå}¥ˆè­¹½Ý±•‘”¹•Ð ‰•¹ÑÉå}¥ˆ¤°(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€‰­¹½Ý¹}‰äˆèÍ½ÉÑ•¡­¹½Ý¹}‰ä¤°(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€‰¹½Ñ}­¹½Ý¹}‰äˆèÍ½ÉÑ•¡¹½Ñ}­¹½Ý¹}‰ä¤°(€€€€€€€€€€€€€€€€€€€€€€€€€€€ô°(€€€€€€€€€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€É•ÑÕÉ¸…Ý…¥ÐÍ•±˜¹}É•Á½ÉÐ (€€€€€€€€€€€€€€€‘ˆ°ÁÉ½©•Ñ}¥õÁÉ½©•Ñ}¥°…É}¥ôˆˆ°¡…ÁÑ•É}Á±…¹}¥ôˆˆ°Í•¹•}¥õ9½¹”°(€€€€€€€€€€€€€€€ÍÕ‰©•Ñ}ÑåÁ”ô‰¡…ÁÑ•É}‘É…™Ðˆ°ÍÕ‰©•Ñ}¥õÍÑÈ¡‘É…™Ð¹•Ð ‰‘É…™Ñ}¥ˆ¤½È€ˆˆ¤°(€€€€€€€€€€€€€€€Ù•ÉÍ¥½¹}¹Õµ‰•Èõ¥¹Ð¡‘É…™Ð¹•Ð ‰Ù•ÉÍ¥½¹}¹Õµ‰•Èˆ¤½È€Ä¤°ÍÑ…”õÍÑ…”°(€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹ÌõÙ¥½±…Ñ¥½¹Ì°Ý…É¹¥¹ÌõÝ…É¹¥¹Ì°™¥¹‘¥¹Ìõ™¥¹‘¥¹Ì°(€€€€€€€€€€€€€€€•Ù¥‘•¹”õl‰Ý½É­™±½Ý}µ½‘”õ‘¥Í½Ù•Éäˆ°˜‰Ý½É‘}½Õ¹Ðõí½Õ¹Ñô‰t°Á•ÉÍ¥ÍÐõÁ•ÉÍ¥ÍÐ°(€€€€€€€€€€€€¤(€€€€€€€¡…ÁÑ•È€ô…Ý…¥Ð‘ˆ¹¡…ÁÑ•É}Á±…¹Ì¹™¥¹‘}½¹” (€€€€€€€€€€€ì(€€€€€€€€€€€€€€€€‰ÁÉ½©•Ñ}¥ˆèÁ¥°(€€€€€€€€€€€€€€€€‰¡…ÁÑ•É}Á±…¹}¥ˆè‘É…™Ð¹•Ð ‰¡…ÁÑ•É}Á±…¹}¥ˆ¤°(€€€€€€€€€€€ô(€€€€€€€€¤(€€€€€€€Ù¥½±…Ñ¥½¹Ìè¥ÑmÍÑÈ°±¥ÍÑmÍÑÉut€ôì(€€€€€€€€€€€€‰µ¥ÍÍ¥¹}­¹½Ý±•‘”ˆèmt°(€€€€€€€€€€€€‰½¹ÑÉ…‘¥Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰…ÉÑ¥™…Ñ}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰Ñ¥µ•±¥¹•}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰¡…É…Ñ•É}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰Á½Ý•É}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰‘•Á•¹‘•¹å}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰™½É•Í¡…‘½Ý}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰¡…ÁÑ•É}µ•µ‰•ÉÍ¡¥Á}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€€€€€€‰Í•¹•}½É‘•É¥¹}Ù¥½±…Ñ¥½¹Ìˆèmt°(€€€€€€€ô(€€€€€€€¥˜¹½Ð¡…ÁÑ•Èè(€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰¡…ÁÑ•É}µ•µ‰•ÉÍ¡¥Á}Ù¥½±…Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€‰¡…ÁÑ•ÈÁ±…¸¹½Ð™½Õ¹ˆ(€€€€€€€€€€€€¤(€€€€€€€€€€€Í•¹•Ì€ômt(€€€€€€€•±Í”è(€€€€€€€€€€€¥˜ÍÑÈ¡¡…ÁÑ•È¹•Ð ‰ÍÑ…ÑÕÌˆ¤½È€ˆˆ¤¹±½Ý•È ¤€„ô€‰…ÁÁÉ½Ù•ˆè(€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰¡…ÁÑ•É}µ•µ‰•ÉÍ¡¥Á}Ù¥½±…Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€€€€€‰¡…ÁÑ•ÈÁ±…¸¥Ì¹½Ð…ÁÁÉ½Ù•ˆ(€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€‘•Ù•±½Áµ•¹Ð€ô…Ý…¥Ð…É}‘•Ù•±½Áµ•¹Ñ}Í•ÉÙ¥”¹•Ù…±Õ…Ñ” (€€€€€€€€€€€€€€€‘ˆ°ÁÉ½©•Ñ}¥°ÍÑÈ¡¡…ÁÑ•È¹•Ð ‰…É}¥ˆ¤½È€ˆˆ¤°Á•ÉÍ¥ÍÐõ…±Í”(€€€€€€€€€€€€¤(€€€€€€€€€€€¥˜¹½Ð‘•Ù•±½Áµ•¹Ñl‰‘É…™Ñ…‰±”‰tè(€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰‘•Á•¹‘•¹å}Ù¥½±…Ñ¥½¹Ì‰t¹•áÑ•¹ (€€€€€€€€€€€€€€€€€€€‘•Ù•±½Áµ•¹Ð¹•Ð ‰‰±½­•ÉÌˆ¤½Èl‰ÉŒ¥Ì¹½Ð‘É…™Ñ…‰±”‰t(€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€Í•¹•Ì€ô…Ý…¥Ð‘ˆ¹Í•¹•}Á±…¹Ì¹™¥¹ (€€€€€€€€€€€€€€€ì(€€€€€€€€€€€€€€€€€€€€‰ÁÉ½©•Ñ}¥ˆèÁ¥°(€€€€€€€€€€€€€€€€€€€€‰¡…ÁÑ•É}Á±…¹}¥ˆè¡…ÁÑ•È¹•Ð ‰¡…ÁÑ•É}Á±…¹}¥ˆ¤°(€€€€€€€€€€€€€€€ô(€€€€€€€€€€€€¤¹Í½ÉÐ ‰½É‘•Èˆ°€Ä¤¹Ñ½}±¥ÍÐ¡±•¹Ñ ôÄÀÀÀ¤(€€€€€€€•áÁ•Ñ•‘}Í•¹•}¥‘Ì€ômÍ•¹•l‰Í•¹•}¥‰t™½ÈÍ•¹”¥¸Í•¹•Ít(€€€€€€€Í½ÕÉ•}¥‘Ì€ô}¥‘Ì¡‘É…™Ð¹•Ð ‰Í½ÕÉ•}Í•¹•}‘É…™Ñ}¥‘Ìˆ¤¤(€€€€€€€Í½ÕÉ•}‘É…™ÑÌ€ômt(€€€€€€€™½ÈÍ½ÕÉ•}¥¥¸Í½ÕÉ•}¥‘Ìè(€€€€€€€€€€€Í½ÕÉ”€ô…Ý…¥Ð‘ˆ¹Í•¹•}‘É…™ÑÌ¹™¥¹‘}½¹” (€€€€€€€€€€€€€€€ì‰ÁÉ½©•Ñ}¥ˆèÁ¥°€‰‘É…™Ñ}¥ˆèÍ½ÕÉ•}¥‘ô(€€€€€€€€€€€€¤(€€€€€€€€€€€¥˜¹½ÐÍ½ÕÉ”è(€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰¡…ÁÑ•É}µ•µ‰•ÉÍ¡¥Á}Ù¥½±…Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€€€€˜‰U¹­¹½Ý¸Í•¹”‘É…™ÐíÍ½ÕÉ•}¥‘ôˆ(€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€€€€€½¹Ñ¥¹Õ”(€€€€€€€€€€€Í½ÕÉ•}‘É…™ÑÌ¹…ÁÁ•¹¡Í½ÕÉ”¤(€€€€€€€€€€€¥˜¹½ÐÍ½ÕÉ”¹•Ð ‰…Ñ¥Ù”ˆ¤½ÈÍ½ÕÉ”¹•Ð ‰ÍÑ…ÑÕÌˆ¤€„ô€‰…ÁÁÉ½Ù•ˆè(€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰¡…ÁÑ•É}µ•µ‰•ÉÍ¡¥Á}Ù¥½±…Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€€€€˜‰M•¹”‘É…™ÐíÍ½ÕÉ•}¥‘ô¥Ì¹½Ð…Ñ¥Ù”…¹…ÁÁÉ½Ù•ˆ(€€€€€€€€€€€€€€€€¤(€€€€€€€…ÑÕ…±}Í•¹•}¥‘Ì€ômÍÑÈ¡¥Ñ•´¹•Ð ‰Í•¹•}¥ˆ¤½È€ˆˆ¤™½È¥Ñ•´¥¸Í½ÕÉ•}‘É…™ÑÍt(€€€€€€€¥˜…ÑÕ…±}Í•¹•}¥‘Ì€„ô•áÁ•Ñ•‘}Í•¹•}¥‘Ìè(€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰Í•¹•}½É‘•É¥¹}Ù¥½±…Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€‰ÁÁÉ½Ù•Í•¹”‘É…™ÑÌ‘¼¹½Ð•á…Ñ±äµ…Ñ ¡…ÁÑ•ÈÍ•¹”½É‘•Èˆ(€€€€€€€€€€€€¤(€€€€€€€•¹•É…Ñ•‘}Ñ•áÐ€ôÍÑÈ¡‘É…™Ð¹•Ð ‰•¹•É…Ñ•‘}Ñ•áÐˆ¤½È€ˆˆ¤(€€€€€€€ÕÉÍ½È€ô€À(€€€€€€€™½ÈÍ½ÕÉ”¥¸Í½ÕÉ•}‘É…™ÑÌè(€€€€€€€€€€€Ñ•áÐ€ôÍÑÈ¡Í½ÕÉ”¹•Ð ‰•¹•É…Ñ•‘}Ñ•áÐˆ¤½È€ˆˆ¤(€€€€€€€€€€€¥¹‘•à€ô•¹•É…Ñ•‘}Ñ•áÐ¹™¥¹¡Ñ•áÐ°ÕÉÍ½È¤(€€€€€€€€€€€¥˜¥¹‘•à€ð€Àè(€€€€€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰½¹ÑÉ…‘¥Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€€€€˜‰¡…ÁÑ•È‘½•Ì¹½ÐÁÉ•Í•ÉÙ”Í•¹”‘É…™ÐíÍ½ÕÉ”¹•Ð ‘É…™Ñ}¥œ¥ôÙ•É‰…Ñ¥´ˆ(€€€€€€€€€€€€€€€€¤(€€€€€€€€€€€€€€€½¹Ñ¥¹Õ”(€€€€€€€€€€€ÕÉÍ½È€ô¥¹‘•à€¬±•¸¡Ñ•áÐ¤(€€€€€€€ÑÉ…¹Í¥Ñ¥½¹}Á…¥ÉÌ€ôì(€€€€€€€€€€€€ (€€€€€€€€€€€€€€€ÍÑÈ¡¥Ñ•´¹•Ð ‰™É½µ}Í•¹•}‘É…™Ñ}¥ˆ¤½È€ˆˆ¤°(€€€€€€€€€€€€€€€ÍÑÈ¡¥Ñ•´¹•Ð ‰Ñ½}Í•¹•}‘É…™Ñ}¥ˆ¤½È€ˆˆ¤°(€€€€€€€€€€€€¤(€€€€€€€€€€€™½È¥Ñ•´¥¸‘É…™Ð¹•Ð ‰ÑÉ…¹Í¥Ñ¥½¹Ìˆ¤½Èmt(€€€€€€€€€€€¥˜¥Í¥¹ÍÑ…¹”¡¥Ñ•´°‘¥Ð¤(€€€€€€€ô(€€€€€€€…±±½Ý•‘}Á…¥ÉÌ€ôÍ•Ð¡é¥À¡Í½ÕÉ•}¥‘Ì°Í½ÕÉ•}¥‘ÍlÄét¤¤(€€€€€€€¥¹Ù…±¥‘}Á…¥ÉÌ€ôÑÉ…¹Í¥Ñ¥½¹}Á…¥ÉÌ€´…±±½Ý•‘}Á…¥ÉÌ(€€€€€€€¥˜¥¹Ù…±¥‘}Á…¥ÉÌè(€€€€€€€€€€€Ù¥½±…Ñ¥½¹Íl‰Í•¹•}½É‘•É¥¹}Ù¥½±…Ñ¥½¹Ì‰t¹…ÁÁ•¹ (€€€€€€€€€€€€€€€€‰QÉ…¹Í¥Ñ¥½¹ÌÉ•™•É•¹”¹½¸µ…‘©…•¹Ð½ÈÕ¹­¹½Ý¸Í•¹•Ìˆ(€€€€€€€€€€€€¤(€€€€€€€É•ÑÕÉ¸…Ý…¥ÐÍ•±˜¹}É•Á½ÉÐ (€€€€€€€€€€€‘ˆ°(€€€€€€€€€€€ÁÉ½©•Ñ}¥õÁÉ½©•Ñ}¥°(€€€€€€€€€€€…É}¥õÍÑÈ¡‘É…™Ð¹•Ð ‰…É}¥ˆ¤½È€ˆˆ¤°(€€€€€€€€€€€¡…ÁÑ•É}Á±…¹}¥õÍÑÈ¡‘É…™Ð¹•Ð ‰¡…ÁÑ•É}Á±…¹}¥ˆ¤½È€ˆˆ¤°(€€€€€€€€€€€Í•¹•}¥õ9½¹”°(€€€€€€€€€€€ÍÕ‰©•Ñ}ÑåÁ”ô‰¡…ÁÑ•É}‘É…™Ðˆ°(€€€€€€€€€€€ÍÕ‰©•Ñ}¥õÍÑÈ¡‘É…™Ð¹•Ð ‰‘É…™Ñ}¥ˆ¤½È€ˆˆ¤°(€€€€€€€€€€€Ù•ÉÍ¥½¹}¹Õµ‰•Èõ¥¹Ð¡‘É…™Ð¹•Ð ‰Ù•ÉÍ¥½¹}¹Õµ‰•Èˆ¤½È€À¤°(€€€€€€€€€€€ÍÑ…”õÍÑ…”°(€€€€€€€€€€€Ù¥½±…Ñ¥½¹ÌõÙ¥½±…Ñ¥½¹Ì°(€€€€€€€€€€€Ý…É¹¥¹Ìõmt°(€€€€€€€€€€€•Ù¥‘•¹”õl(€€€€€€€€€€€€€€€˜‰Í½ÕÉ•}Í•¹•}½Õ¹Ðõí±•¸¡Í½ÕÉ•}¥‘Ì¥ôˆ°(€€€€€€€€€€€€€€€˜‰¡…ÁÑ•É}Í•¹•}½Õ¹Ðõí±•¸¡•áÁ•Ñ•‘}Í•¹•}¥‘Ì¥ôˆ°(€€€€€€€€€€€t°(€€€€€€€€€€€Á•ÉÍ¥ÍÐõÁ•ÉÍ¥ÍÐ°(€€€€€€€€¤(()‘É…™Ñ}Ù…±¥‘…Ñ¥½¹}Í•ÉÙ¥”€ôÉ…™ÑY…±¥‘…Ñ¥½¹M•ÉÙ¥” ¤(
+            "memory": self._public_memory(settings.get("memory") or {}),
+        }
+
+    async def get_public_provider_settings(self) -> Dict[str, Any]:
+        settings = await self.get_app_settings()
+        providers = secret_encryption_service.public_providers(
+            settings.get("providers", {})
+        )
+        if not app_config.use_mock_llm:
+            providers.pop("mock", None)
+        return {
+            "providers": providers,
+            "fallback_priority": settings.get("fallback_priority", []),
+            "llm_delay_seconds": settings.get("llm_delay_seconds", 5),
+            "memory": self._public_memory(settings.get("memory") or {}),
+        }
+
+    @staticmethod
+    def _public_memory(memory: Dict[str, Any]) -> Dict[str, Any]:
+        public = copy.deepcopy(DEFAULT_MEMORY_SETTINGS)
+        public.update({key: value for key, value in (memory or {}).items() if key != "api_key_encrypted"})
+        public.pop("api_key", None)
+        public.pop("api_key_encrypted", None)
+        public["configured"] = bool((memory or {}).get("api_key_encrypted") or (memory or {}).get("configured"))
+        return public
+
+    async def get_memory_settings(self, *, runtime: bool = False) -> Dict[str, Any]:
+        current = await self.get_app_settings()
+        memory = _deep_merge(DEFAULT_MEMORY_SETTINGS, current.get("memory") or {})
+        if runtime:
+            encrypted = str(memory.pop("api_key_encrypted", "") or "")
+            memory["api_key"] = secret_encryption_service.decrypt(encrypted) if encrypted else ""
+            memory["configured"] = bool(encrypted)
+        else:
+            memory = self._public_memory(memory)
+        return memory
+
+    async def save_memory_settings(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        current = await self.get_app_settings()
+        prior = _deep_merge(DEFAULT_MEMORY_SETTINGS, current.get("memory") or {})
+        allowed = {"mode", "endpoint", "service_id", "team_id", "agent_id", "user_id", "timeout_ms"}
+        next_memory = {key: payload[key] for key in allowed if key in payload}
+        mode = str(next_memory.get("mode") or prior.get("mode") or "native").lower()
+        if mode not in {"native", "tencent", "hybrid", "benchmark"}:
+            raise ValueError("memory mode must be native, tencent, hybrid, or benchmark")
+        next_memory["mode"] = mode
+        next_memory["endpoint"] = str(next_memory.get("endpoint") or prior.get("endpoint") or "").rstrip("/")
+        next_memory["timeout_ms"] = max(250, min(int(next_memory.get("timeout_ms") or prior.get("timeout_ms") or 3000), 30000))
+        supplied_key = str(payload.get("api_key") or "")
+        clear_key = bool(payload.get("clear_api_key"))
+        if clear_key:
+            encrypted = ""
+        elif supplied_key and supplied_key != "***redacted***":
+            encrypted = secret_encryption_service.encrypt(supplied_key)
+        else:
+            encrypted = str(prior.get("api_key_encrypted") or "")
+        next_memory["api_key_encrypted"] = encrypted
+        next_memory["configured"] = bool(encrypted)
+        saved = await self.save_app_settings({"memory": next_memory})
+        return self._public_memory(saved.get("memory") or next_memory)
+
+    async def save_provider_settings(self, provider_settings: Dict[str, Any]) -> Dict[str, Any]:
+        provider_settings = copy.deepcopy(provider_settings)
+        if not app_config.use_mock_llm:
+            provider_settings.get("providers", {}).pop("mock", None)
+        current = await self.get_app_settings()
+        provider_settings["providers"] = (
+            secret_encryption_service.prepare_provider_storage(
+                provider_settings.get("providers") or {},
+                current.get("providers") or {},
+            )
+        )
+        settings = await self.save_app_settings(provider_settings)
+        providers = secret_encryption_service.runtime_providers(
+            settings.get("providers", {})
+        )
+        if not app_config.use_mock_llm:
+            providers.pop("mock", None)
+        return {
+            "providers": providers,
+            "fallback_priority": settings.get("fallback_priority", []),
+            "llm_delay_seconds": settings.get("llm_delay_seconds", 5),
+        }
+
+    async def get_execution_settings(self) -> Dict[str, Any]:
+        settings = await self.get_app_settings()
+        execution = _deep_merge(DEFAULT_EXECUTION_SETTINGS, settings.get("execution", {}))
+        if not app_config.use_mock_llm and (
+            execution.get("default_provider") == "mock"
+            or execution.get("default_model") == "mock-narrative-intelligence"
+        ):
+            db = Database.get_db()
+            verified = await db.provider_model_health.find_one(
+                {"success": True, "provider": {"$ne": "mock"}},
+                sort=[("latency", 1)],
+            )
+            execution.update({
+                "execution_mode": "full",
+                "default_provider": verified.get("provider") if verified else "gemini",
+                "default_model": verified.get("model") if verified else "",
+            })
+            await self.save_app_settings({"execution": execution})
+        return execution
+
+    async def save_execution_settings(self, execution: Dict[str, Any]) -> Dict[str, Any]:
+        if not app_config.use_mock_llm and (
+            execution.get("execution_mode") == "mock"
+            or execution.get("default_provider") == "mock"
+            or execution.get("default_model") == "mock-narrative-intelligence"
+        ):
+            raise ValueError("Mock AI execution is disabled")
+        requests_per_minute = int(
+            execution.get(
+                "provider_requests_per_minute",
+                DEFAULT_EXECUTION_SETTINGS["provider_requests_per_minute"],
+            )
+        )
+        if not 5 <= requests_per_minute <= 10:
+            raise ValueError("provider_requests_per_minute must be between 5 and 10")
+        max_calls = int(
+            execution.get(
+                "max_agent_calls_per_cycle",
+                DEFAULT_EXECUTION_SETTINGS["max_agent_calls_per_cycle"],
+            )
+        )
+        if not 0 <= max_calls <= 10:
+            raise ValueError("max_agent_calls_per_cycle must be between 0 and 10")
+        max_depth = int(
+            execution.get(
+                "max_orchestration_depth",
+                DEFAULT_EXECUTION_SETTINGS["max_orchestration_depth"],
+            )
+        )
+        if not 0 <= max_depth <= 5:
+            raise ValueError("max_orchestration_depth must be between 0 and 5")
+        if float(execution.get("max_cycle_cost_usd", 0)) < 0:
+            raise ValueError("max_cycle_cost_usd cannot be negative")
+        settings = await self.save_app_settings({"execution": execution})
+        return _deep_merge(DEFAULT_EXECUTION_SETTINGS, settings.get("execution", {}))
+
+    async def get_agent_assignments(self) -> List[Dict[str, Any]]:
+        settings = await self.get_app_settings()
+        by_name = {item.get("agent_name"): item for item in settings.get("agent_assignments", [])}
+        assignments = [
+            _deep_merge(default, by_name.get(default["agent_name"], {}))
+            for default in DEFAULT_ASSIGNMENTS
+        ]
+        execution = _deep_merge(
+            DEFAULT_EXECUTION_SETTINGS, settings.get("execution", {})
+        )
+        for assignment in assignments:
+            if not assignment.get("provider"):
+                assignment["provider"] = execution.get("default_provider", "gemini")
+            if not assignment.get("model"):
+                assignment["provider"] = execution.get(
+                    "default_provider", assignment.get("provider") or "gemini"
+                )
+                assignment["model"] = execution.get("default_model", "")
+        if not app_config.use_mock_llm:
+            for assignment in assignments:
+                if assignment.get("provider") == "mock" or assignment.get("model") == "mock-narrative-intelligence":
+                    assignment["provider"] = "gemini"
+                    assignment["model"] = ""
+                    assignment["use_mock_in_hybrid"] = False
+        return assignments
+
+    async def save_agent_assignments(self, assignments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        if not app_config.use_mock_llm and any(
+            item.get("provider") == "mock" or item.get("model") == "mock-narrative-intelligence"
+            for item in assignments
+        ):
+            raise ValueError("Mock agent assignments are disabled")
+        by_name = {item.get("agent_name"): item for item in await self.get_agent_assignments()}
+        for item in assignments:
+            if item.get("agent_name"):
+                by_name[item["agent_name"]] = _deep_merge(by_name.get(item["agent_name"], {}), item)
+        ordered = [
+            _deep_merge(default, by_name.get(default["agent_name"], {}))
+            for default in DEFAULT_ASSIGNMENTS
+        ]
+        await self.save_app_settings({"agent_assignments": ordered})
+        return ordered
+
+
+settings_service = SettingsService()
