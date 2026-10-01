@@ -1,0 +1,200 @@
+{
+  "audit_date": "2026-08-16",
+  "project": {
+    "project_id": "6a81af51cd566e919fdc052b",
+    "project_name": "REAL NOVEL AUDIT — Ashes of the Unwritten Sky — 20260816",
+    "story_title": "Ashes of the Unwritten Sky",
+    "backend_health": "healthy",
+    "backend_version": "2.0.0-rc9",
+    "frontend_url": "http://localhost:3000",
+    "preserved": true,
+    "isolated": true,
+    "real_provider_core_journey": true,
+    "mock_responses_used_for_core_journey": false,
+    "memory_mode": "native_phase_c",
+    "phase_d_enabled": false,
+    "tencent_primary_enabled": false
+  },
+  "workflow": {
+    "story_studio_turns": 4,
+    "story_studio_real_ai_turns": 3,
+    "develop_story_agent_outputs": 18,
+    "chapters_visible_in_ui": 10,
+    "raw_chapter_drafts": 11,
+    "approved_chapters": 1,
+    "draft_chapters": 9,
+    "duplicate_chapter_records": [4],
+    "audit_endpoint_status": "fail",
+    "audit_findings": [
+      {"severity": "error", "type": "invalid_cycle_metadata", "collection": "character_bibles", "count": 4},
+      {"severity": "error", "type": "invalid_cycle_metadata", "collection": "mystery_registry", "count": 8},
+      {"severity": "error", "type": "invalid_cycle_metadata", "collection": "relationship_graphs", "count": 1}
+    ]
+  },
+  "chapters": [
+    {"chapter": 1, "draft_id": "a77de2f5-0059-4fdc-83f9-e0eeb55f8920", "word_count": 2664, "status": "approved", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 16647, "latency_ms": 44911, "estimated_cost_usd": 0.016647, "execution_trace_id_in_draft_metadata": "6a81b4c5cd566e919fdc06c3", "continuity_observation": "Promising local opening; identity and reincarnation grounding delayed."},
+    {"chapter": 2, "draft_id": "c6b029c3-a7d3-480a-9a9b-e4fe649f19dc", "word_count": 2885, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 16528, "latency_ms": 50692, "estimated_cost_usd": 0.016528, "execution_trace_id_in_draft_metadata": "6a81b663cd566e919fdc06d4", "continuity_observation": "Fatal break: he/him, ten-year-old boy, farm-family assumptions after Renn/she Chapter 1."},
+    {"chapter": 3, "draft_id": "3ae9a7f7-ff29-48dd-a0ac-489c91f431b4", "word_count": 2435, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 16552, "latency_ms": 73733, "estimated_cost_usd": 0.016552, "execution_trace_id_in_draft_metadata": "6a81b6c2cd566e919fdc06db", "continuity_observation": "Returns to Renn/she and reuses seam, Lira, levy, and memory-cost direction; does not repair Ch2 lineage."},
+    {"chapter": 4, "draft_id": "f949eb14-f4a8-44c3-b3a7-06d314b79e24", "word_count": 2430, "status": "draft", "version_count": 1, "raw_duplicate": true, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 18175, "latency_ms": 46666, "estimated_cost_usd": 0.018175, "execution_trace_id_in_draft_metadata": "6a81b7c1cd566e919fdc06e1", "continuity_observation": "Late completion from a retry; competing Chapter 4 lineage."},
+    {"chapter": 4, "draft_id": "60ba454c-7a94-4f2e-978f-5cc094a06032", "word_count": 2569, "status": "draft", "version_count": 2, "active_ui_version": true, "raw_duplicate": true, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 16794, "latency_ms": 187598, "estimated_cost_usd": 0.016794, "execution_trace_id_in_draft_metadata": "6a81b967cd566e919fdc06f0", "continuity_observation": "Active UI variant; raw records still both active/version 1."},
+    {"chapter": 5, "draft_id": "06b14f9d-8487-4920-8c1b-69dfa6d94e09", "word_count": 2335, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 14995, "latency_ms": 59523, "estimated_cost_usd": 0.014995, "execution_trace_id_in_draft_metadata": "6a81b949cd566e919fdc06ee", "continuity_observation": "Missing Darin and alternate-space mystery advance; side characters remain functional."},
+    {"chapter": 6, "draft_id": "bd45bef7-921d-4ea0-961c-c1d5e8b1fa84", "word_count": 2151, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 16090, "latency_ms": 86517, "estimated_cost_usd": 0.01609, "execution_trace_id_in_draft_metadata": "6a81ba48cd566e919fdc06fc", "continuity_observation": "Well/seam descent continues; exposition and escalation become repetitive."},
+    {"chapter": 7, "draft_id": "3c3aa50d-1175-4469-bb1c-6f3044e07feb", "word_count": 2999, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 18017, "latency_ms": 129452, "estimated_cost_usd": 0.018017, "execution_trace_id_in_draft_metadata": "6a81bae0cd566e919fdc0702", "continuity_observation": "Suture-bearer lore broadens the world but arrives faster than relationships develop."},
+    {"chapter": 8, "draft_id": "34e201c7-673f-44c2-a85d-225f6f2391af", "word_count": 2230, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 17597, "latency_ms": 121293, "estimated_cost_usd": 0.017597, "execution_trace_id_in_draft_metadata": "6a81bb6dcd566e919fdc0708", "continuity_observation": "Preserves blight/well/alternate-world hooks; provisional farm context remains influential."},
+    {"chapter": 9, "draft_id": "078cb917-3394-4fb3-9188-2a837e6a58a8", "word_count": 2409, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 16844, "latency_ms": 53385, "estimated_cost_usd": 0.016844, "execution_trace_id_in_draft_metadata": "6a81bbb7cd566e919fdc070e", "continuity_observation": "Useful quiet chapter; abstract seam/threshold language repeats."},
+    {"chapter": 10, "draft_id": "6a2e7afd-120f-4168-92a9-b33c5f8da74b", "word_count": 2268, "status": "draft", "version_count": 1, "validation": "PASS", "provider": "openrouter", "model": "deepseek/deepseek-v4-flash", "tokens_used": 17023, "latency_ms": 51816, "estimated_cost_usd": 0.017023, "execution_trace_id_in_draft_metadata": "6a81bbfbcd566e919fdc0714", "continuity_observation": "Renn/she and early motifs return; final hook remains unapproved and plan-driven."}
+  ],
+  "opening_introduction_timeline": {
+    "protagonist_name": {"first_word_approx": 0, "assessment": "Immediate name before full identity grounding."},
+    "current_location": {"first_word_approx": 0, "assessment": "Muddy riverbank/levy concrete and effective."},
+    "immediate_goal": {"first_word_approx": 0, "assessment": "Keep the failing levy from breaking."},
+    "danger": {"first_word_approx": 0, "assessment": "River and levy pressure are immediate."},
+    "mother": {"first_word_approx": 128},
+    "darin": {"first_word_approx": 183},
+    "seam_foreshadowing": {"first_word_approx": 436},
+    "previous_life_memory": {"first_word_approx": 785},
+    "old_life_identity": {"first_word_approx": 800, "assessment": "Disaster mapping/emergency infrastructure explained in a concentrated block."},
+    "current_identity_age_location": {"first_word_approx": 1030, "assessment": "Too late for a fully grounded opening."},
+    "system_or_power": {"first_word_approx": 1450, "assessment": "Delayed appropriately relative to a status window, but explained rather than fully dramatized."},
+    "lira": {"first_word_approx": 2019, "assessment": "Too late for the strongest early relationship beat."},
+    "explicit_reincarnation_word": {"found": false},
+    "major_supporting_character_maren": {"found": false},
+    "chapter_hook": {"approx_position": "final scene", "assessment": "Real curiosity hook; familiar threshold/voice cadence."}
+  },
+  "provider_traces": {
+    "story_studio": [
+      {"job_id": "64c66f17-1035-4aa7-922c-4fa395d5932b", "intent": "retrieve_explain", "provider": "gemini", "model": "gemini-3.1-flash-lite", "tokens": 1706, "latency_ms": 3964, "task_tier": "cheap", "routing_reason": "task tier: cheap", "source_type": "real_ai", "mutation": "none", "trace_id": "6a81af7dcd566e919fdc0531"},
+      {"job_id": "3b1ea4b9-e5ef-48a2-b8eb-7d8129ea46b1", "intent": "review", "provider_call": false, "mutation": "none", "observation": "Deterministic review classification answered a different question."},
+      {"job_id": "69e42442-eb22-489d-923b-19698e8a00bc", "intent": "brainstorm", "provider": "gemini", "model": "gemini-3.1-flash-lite", "tokens": 1873, "latency_ms": 4536, "task_tier": "cheap", "routing_reason": "task tier: cheap", "source_type": "real_ai", "mutation": "none", "trace_id": "6a81afb0cd566e919fdc053d"},
+      {"job_id": "25431e55-a674-4c5b-af82-9d479193954a", "intent": "retrieve_explain", "provider": "gemini", "model": "gemini-3.1-flash-lite", "tokens": 2019, "latency_ms": 3572, "task_tier": "cheap", "routing_reason": "task tier: cheap", "source_type": "real_ai", "mutation": "none", "trace_id": "6a81afc9cd566e919fdc0545"}
+    ],
+    "develop_story": {
+      "call_count": 18,
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "tokens": 730627,
+      "recorded_cost_usd": 0.730627,
+      "duration_minutes_over": 17,
+      "fallback_used": false,
+      "calls": [
+        {"cycle": 1, "agent": "NarrativeDirectorAgent", "tokens": 4822, "cost_usd": 0.004822, "latency_ms": 48528, "retries": 0},
+        {"cycle": 1, "agent": "StoryArchitectAgent", "tokens": 6823, "cost_usd": 0.006823, "latency_ms": 35157, "retries": 0},
+        {"cycle": 1, "agent": "QuestionAgent", "tokens": 8754, "cost_usd": 0.008754, "latency_ms": 35485, "retries": 0},
+        {"cycle": 1, "agent": "CharacterJourneyAgent", "tokens": 11616, "cost_usd": 0.011616, "latency_ms": 44587, "retries": 1},
+        {"cycle": 1, "agent": "RelationshipAgent", "tokens": 13574, "cost_usd": 0.013574, "latency_ms": 25767, "retries": 0},
+        {"cycle": 1, "agent": "WorldAgent", "tokens": 15536, "cost_usd": 0.015536, "latency_ms": 49663, "retries": 0},
+        {"cycle": 1, "agent": "FactionAgent", "tokens": 16299, "cost_usd": 0.016299, "latency_ms": 21625, "retries": 0},
+        {"cycle": 1, "agent": "ThemeAgent", "tokens": 18302, "cost_usd": 0.018302, "latency_ms": 18628, "retries": 0},
+        {"cycle": 1, "agent": "ArcArchitectAgent", "tokens": 21195, "cost_usd": 0.021195, "latency_ms": 29964, "retries": 1},
+        {"cycle": 1, "agent": "PacingAgent", "tokens": 22429, "cost_usd": 0.022429, "latency_ms": 22341, "retries": 0},
+        {"cycle": 2, "agent": "PowerSystemAgent", "tokens": 69974, "cost_usd": 0.069974, "latency_ms": 36955, "retries": 0},
+        {"cycle": 2, "agent": "CharacterJourneyAgent", "tokens": 72765, "cost_usd": 0.072765, "latency_ms": 143828, "retries": 0},
+        {"cycle": 2, "agent": "MysteryAgent", "tokens": 70877, "cost_usd": 0.070877, "latency_ms": 43630, "retries": 0},
+        {"cycle": 2, "agent": "ArcArchitectAgent", "tokens": 75549, "cost_usd": 0.075549, "latency_ms": 27516, "retries": 0},
+        {"cycle": 2, "agent": "StoryDevelopmentAgent", "tokens": 74553, "cost_usd": 0.074553, "latency_ms": 36398, "retries": 0},
+        {"cycle": 2, "agent": "PacingAgent", "tokens": 74547, "cost_usd": 0.074547, "latency_ms": 20195, "retries": 2},
+        {"cycle": 2, "agent": "ReadinessAgent", "tokens": 75831, "cost_usd": 0.075831, "latency_ms": 84669, "retries": 2},
+        {"cycle": 2, "agent": "RelationshipAgent", "tokens": 77181, "cost_usd": 0.077181, "latency_ms": 27493, "retries": 0}
+      ]
+    },
+    "chapter_generation": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "unique_chapter_tokens": 167087,
+      "unique_estimated_cost_usd": 0.167087,
+      "raw_tokens_including_duplicate_chapter_4": 185262,
+      "raw_estimated_cost_usd": 0.185262,
+      "central_project_trace_listing": "missing chapter writer traces; draft metadata contains provider trace IDs"
+    },
+    "editorial_and_revision": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
+      "recorded_cost_usd": 0.026361,
+      "whole_revision_failed": true,
+      "selection_revision_succeeded": true,
+      "source_protected": true
+    }
+  },
+  "cost": {
+    "story_studio_estimated_usd": 0.005598,
+    "develop_recorded_usd": 0.730627,
+    "unique_chapters_estimated_usd": 0.167087,
+    "raw_chapters_estimated_usd": 0.185262,
+    "editorial_revision_recorded_usd": 0.026361,
+    "unique_path_total_estimated_usd": 0.929673,
+    "raw_path_total_estimated_usd": 0.947848,
+    "accounting_note": "Story Studio and chapter writing are estimated from recorded token fields; Develop/editorial/revision use central trace cost_usd. The gateway conventions differ slightly between metadata and central trace totals."
+  },
+  "quality_scores": {
+    "scale": "1-10; AI-like patterns is risk where 10 is most obvious",
+    "dimensions": ["opening_quality", "readability", "immersion", "prose_naturalness", "character_voice", "dialogue", "emotional_subtlety", "exposition_control", "pacing", "scene_purpose", "tension", "originality", "progression_satisfaction", "continuity", "callback_quality", "chapter_ending_quality", "ai_like_patterns", "voluntary_continue"],
+    "chapters": [
+      {"chapter": 1, "scores": [7,7,7,5,6,5,5,4,6,8,7,7,7,6,6,5,6,6]},
+      {"chapter": 2, "scores": [3,6,5,4,2,5,4,3,6,5,6,4,5,1,2,5,7,2]},
+      {"chapter": 3, "scores": [7,7,6,6,6,5,6,5,6,6,7,6,6,4,7,6,5,6]},
+      {"chapter": 4, "scores": [6,6,6,5,6,5,5,4,6,7,7,5,7,4,6,6,6,5]},
+      {"chapter": 5, "scores": [6,6,6,5,6,5,5,4,6,7,7,5,7,5,5,6,6,5]},
+      {"chapter": 6, "scores": [6,6,6,5,6,5,5,4,6,7,7,5,7,5,6,6,6,5]},
+      {"chapter": 7, "scores": [6,6,6,5,5,5,5,4,6,7,7,5,7,5,6,5,7,5]},
+      {"chapter": 8, "scores": [6,6,6,5,6,5,5,4,6,6,7,5,7,4,6,6,6,5]},
+      {"chapter": 9, "scores": [6,7,6,5,6,5,6,4,6,6,6,5,6,5,6,5,6,5]},
+      {"chapter": 10, "scores": [7,7,7,5,6,5,6,4,6,7,8,6,7,5,7,6,7,6]}
+    ]
+  },
+  "continuity_observations": [
+    {"severity": "critical", "chapter": 2, "finding": "POV/pronoun/age/identity switch from Renn, fifteen-year-old girl, to ten-year-old boy."},
+    {"severity": "high", "chapter": 3, "finding": "Retry intended for Chapter 2 created Chapter 3; later material cannot be treated as a repair of the target draft."},
+    {"severity": "high", "chapter": 4, "finding": "Delayed completion plus retry created two raw active version-1 Chapter 4 records."},
+    {"severity": "medium", "chapter": "3-10", "finding": "Renn/she and river/seam/Darin/blight motifs mostly persist, but development context continues to inject provisional Kael/farm/well planning."},
+    {"severity": "medium", "chapter": "8-10", "finding": "Early motifs remain retrievable, but structured extraction is absent because only Chapter 1 is approved."}
+  ],
+  "memory_context": {
+    "provider_mode": "native",
+    "native_authoritative": false,
+    "tencent_experimental_non_authoritative": true,
+    "mongo_authoritative": true,
+    "chapter_1_candidate_count": 32,
+    "chapter_2_to_10_candidate_count": 0,
+    "latest_context_token_estimate": 266159,
+    "latest_context_budget": 900000,
+    "latest_model_context_window": 1048576,
+    "retrieved_top_items": ["Kael provisional character", "The Buried Sky", "The One Who Notices", "A Gift, a Wound, or a Claim", "The Hidden Fault in the Local World", "provisional Thornwick/farm/world object"],
+    "correctly_retrieved": ["seam/memory cost", "river/levy/Darin motifs", "broad old-life regret", "latest approved chapter"],
+    "poorly_retrieved": ["Renn identity in Chapter 2", "disaster-mapping old life", "river-household over provisional farm", "rejected-item visibility", "approved small facts over large provisional planning"]
+  },
+  "ui_defects": [
+    {"severity": "critical", "surface": "Writing/retry", "finding": "Retry target can advance chapter number and create the wrong chapter."},
+    {"severity": "critical", "surface": "Writing/versioning", "finding": "Duplicate Chapter 4 raw records remain active/version 1 after delayed completion and retry."},
+    {"severity": "high", "surface": "Dashboard/Companion", "finding": "Milestone and health disagree; Companion reports Getting Started/81 while Dashboard presents a different writing-progress state."},
+    {"severity": "high", "surface": "Story Studio", "finding": "No visible confirmed/candidate/rejected control ledger; old history dominates current conversation."},
+    {"severity": "high", "surface": "Toolbox", "finding": "Characters/world/arcs/timeline present provisional Kael/farm/well planning at a visually authoritative tier."},
+    {"severity": "high", "surface": "Drafting", "finding": "Controlled Drafting is empty while Discovery Writing has ten chapters; workflow relationship is unclear."},
+    {"severity": "medium", "surface": "Knowledge/Canon", "finding": "Candidate suggestions and zero canon facts are technically explainable but not understandable at the moment of approval."},
+    {"severity": "medium", "surface": "Editorial", "finding": "Protected branch flow uses an unlabelled prompt, selection rewrite is hard to discover, and failed whole revision feedback is weak."},
+    {"severity": "medium", "surface": "Observability", "finding": "Story Studio and chapter writer traces are not present in one project-filtered central trace ledger."}
+  ],
+  "revision_test": {
+    "whole_chapter": {"status": "failed", "branch_id": "fad47a39-ebfe-4470-8d0e-3f74bd57e509", "editorial_report_id": "34c63b9b-f5f6-4d6e-8724-afc255162bb1", "failure": "RevisionAgent invalid JSON after retry_count=2; source unchanged."},
+    "selection": {"status": "succeeded", "branch_id": "18e44bb4-39e1-4732-adfa-dba3754bf693", "revision_id": "74920339-9a8f-475a-9737-92fe0e445c4e", "source_protected": true, "quality_observation": "Concrete sensory imagery improved one vague sentence without changing approved source."}
+  },
+  "recommended_priorities": [
+    {"priority": "P0", "title": "Authority-safe continuation", "reason": "Prevent provisional Develop planning from overriding approved identity and explicit author exclusions."},
+    {"priority": "P0", "title": "Chapter lifecycle idempotency", "reason": "Prevent wrong-chapter retries and duplicate active drafts."},
+    {"priority": "P0", "title": "Chapter 1 opening gate", "reason": "Ground identity, human stakes, POV, and present context before backstory/system explanation."},
+    {"priority": "P0", "title": "Unified writing state", "reason": "Make Dashboard, Writing, Companion, Toolbox, Knowledge, Canon, and health agree."},
+    {"priority": "P1", "title": "One understandable writing path", "reason": "Explain or unify Discovery Writing and controlled Drafting."},
+    {"priority": "P1", "title": "Reliable protected revision", "reason": "Make whole-chapter revision complete safely and evaluate literary improvement."},
+    {"priority": "P2", "title": "Progressive retrieval/cost experiments", "reason": "Wait until authority and continuation failures are repaired; preserve Native Phase C meanwhile."}
+  ],
+  "overall_readiness": {
+    "ready_for_real_novel": false,
+    "chapter_1_real_opening": "partial_promising_but_needs_revision",
+    "chapters_2_to_10": "not_acceptable_as_continuation_without_repair",
+    "story_interest": "promising_seed_moderately_interesting_generation",
+    "ai_voice_present": true,
+    "humanization_helps": "small_selection_improvement_only; whole_chapter_path_failed",
+    "story_studio_primary_interface": false,
+    "develop_story": "useful_but_over_planning_and_authority_unsafe",
+    "next_phase": "Authority-safe writing journey"
+  }
+}
