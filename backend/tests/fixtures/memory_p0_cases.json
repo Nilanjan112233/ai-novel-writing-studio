@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "duplicate_chapter_intelligence",
+      "consumer": "discovery_writer",
+      "query": "Continue the river mystery and Elias disappearance",
+      "current_chapter": 2,
+      "expected": {"max_selected_per_logical_version": 1}
+    },
+    {
+      "id": "elias_chronology",
+      "consumer": "discovery_writer",
+      "query": "Continue the search for Elias",
+      "current_chapter": 2,
+      "authority": "Elias disappeared five years ago.",
+      "conflicting_derived": "Mara last saw Elias two years ago.",
+      "expected": {"authority_preserved": true, "derived_conflict_identified": true}
+    },
+    {
+      "id": "pov_person_shift",
+      "consumer": "continuity_validator",
+      "previous_prose": "Mara crossed the river and kept her injured hand hidden.",
+      "candidate_prose": "I crossed the river and kept my injured hand hidden.",
+      "expected": {"pov_shift_detected": true}
+    },
+    {
+      "id": "relationship_extraction_error",
+      "consumer": "continuity_validator",
+      "authority": "Mara and Lindon are not brothers.",
+      "conflicting_derived": "Mara is Lindon's brother.",
+      "expected": {"derived_does_not_override": true, "conflict_detected": true}
+    },
+    {
+      "id": "rejected_brainstorming",
+      "consumer": "discovery_writer",
+      "history": ["Maybe Elias is secretly the villain.", "No, forget that idea."],
+      "expected": {"rejected_leakage": 0}
+    },
+    {
+      "id": "candidate_leakage",
+      "consumer": "discovery_writer",
+      "expected": {"candidate_leakage": 0}
+    },
+    {
+      "id": "superseded_state",
+      "consumer": "discovery_writer",
+      "states": ["Northglass owned by Mara", "Northglass transferred to Ivo"],
+      "expected": {"current_state_only": true}
+    },
+    {
+      "id": "future_knowledge",
+      "consumer": "discovery_writer",
+      "current_chapter": 5,
+      "fact_introduced_chapter": 8,
+      "expected": {"future_leakage": 0}
+    },
+    {
+      "id": "character_knowledge",
+      "consumer": "discovery_writer",
+      "pov_character": "Mara",
+      "known_by": ["Ivo"],
+      "expected": {"pov_knowledge_leakage": 0}
+    }
+  ]
+}
