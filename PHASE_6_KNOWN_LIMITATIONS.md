@@ -1,0 +1,10 @@
+# Phase 6 Known Limitations
+
+1. Deterministic analysis provides strong structural signals but cannot infer every subtle motivation, dialogue-voice shift, emotional beat, travel duration, or implicit callback. StoryAuditorAgent adds interpretation, and all AI observations still require author judgment.
+2. Timeline impossible-date detection uses stored sortable date/range values. Free-form calendars, nonlinear time, time travel, and world-specific travel speeds need explicit structured canon before deterministic validation can be exact.
+3. A changed node is incrementally invalidated, but global derived scores and cross-novel findings are recalculated against the current graph. This preserves correctness; future work could introduce domain dependency partitions for very large multi-thousand-scene projects.
+4. Graph payloads bound individual strings to 2,000 characters and lists to 200 items to avoid duplicating manuscripts. Full prose remains in its authoritative draft collections and can be supplied to bounded AI review separately.
+5. Reference edges are deterministic exact identity/name matches and short phrase matches. Pronouns, metaphors, aliases not present in canon, and implicit semantic references may require AI review or future entity resolution.
+6. Story Bible entity quality depends on approved upstream content and existing registries. It is automatic, but it does not invent missing approved facts.
+7. Existing FastAPI/Pydantic deprecation warnings and two pre-existing React hook dependency warnings remain. The React warnings are inside the frozen Paragraph Editor/AiSuggestionPanel boundary and were not changed because they did not fail runtime, tests, build, or browser validation.
+8. AI reviewer prompts use a severity-prioritized bounded projection of the shared graph. The report records how many deterministic findings were available and included; extremely large finding sets are reviewed across the highest-severity evidence first rather than sent wholesale in one provider request.
