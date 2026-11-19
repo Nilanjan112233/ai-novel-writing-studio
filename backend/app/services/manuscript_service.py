@@ -131,23 +131,37 @@ class ManuscriptService:
             {"project_id": pid, "chapter_plan_id": {"$in": plan_ids}}
         ).to_list(length=5000)
         by_id = {plan.get("chapter_plan_id"): plan for plan in plans}
-        if any(draft.get("chapter_plan_id") not in by_id for draft in drafts):
+
+        def plan_for(draft: Dict[str, Any]) -> Dict[str, Any]:
+            plan = by_id.get(draft.get("chapter_plan_id"))
+            if plan:
+                return plan
+            # Chapters written with "Start writing now" (discovery mode) have no
+            # chapter plan; their own chapter number places them in the book.
+            if (
+                draft.get("workflow_mode") == "discovery"
+                and not draft.get("chapter_plan_id")
+                and int(draft.get("chapter_number") or 0) > 0
+            ):
+                return {"chapter_plan_id": None, "chapter_number": int(draft["chapter_number"])}
             raise ValueError("A chapter draft has no project-owned chapter plan")
+
+        plan_by_draft = {draft["draft_id"]: plan_for(draft) for draft in drafts}
         drafts.sort(
             key=lambda draft: (
-                int(by_id[draft["chapter_plan_id"]].get("chapter_number") or 0),
+                int(plan_by_draft[draft["draft_id"]].get("chapter_number") or 0),
                 str(draft.get("draft_id")),
             )
         )
         numbers = [
-            int(by_id[draft["chapter_plan_id"]].get("chapter_number") or 0)
+            int(plan_by_draft[draft["draft_id"]].get("chapter_number") or 0)
             for draft in drafts
         ]
         if len(numbers) != len(set(numbers)):
             raise ValueError("Manuscript cannot contain duplicate chapter numbers")
         result = []
         for draft in drafts:
-            plan = by_id[draft["chapter_plan_id"]]
+            plan = plan_by_draft[draft["draft_id"]]
             text = str(draft.get("generated_text") or "")
             result.append(
                 {

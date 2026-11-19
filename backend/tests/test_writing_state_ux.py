@@ -115,3 +115,20 @@ def test_selection_revision_keeps_the_rest_of_the_chapter(client: TestClient, sa
     drafts = client.get(f'/api/projects/{project_id}/chapter-drafts').json()
     other = next(item for item in drafts if item['draft_id'] == second['draft_id'])
     assert other['active'] is True
+
+
+def test_discovery_chapters_assemble_into_a_manuscript(client: TestClient, sample_project: dict):
+    """Chapters from "Start writing now" have no chapter plan but must still form a book."""
+    project_id = _project(client, sample_project)
+    first = _approve(client, project_id, 'Open in the lighthouse.')['draft']
+    second = _approve(client, project_id, 'Continue at the harbour.')['draft']
+    manuscript = client.post(f'/api/projects/{project_id}/manuscripts', json={'title': 'Discovery book'})
+    assert manuscript.status_code == 200, manuscript.text
+    manuscript_id = manuscript.json()['manuscript_id']
+    assembled = client.post(f'/api/projects/{project_id}/manuscripts/{manuscript_id}/assemble', json={'chapter_draft_ids': []})
+    assert assembled.status_code == 200, assembled.text
+    body = assembled.json()
+    version = body.get('version') or body
+    chapters = version['source_chapters']
+    assert [chapter['chapter_number'] for chapter in chapters] == [first['chapter_number'], second['chapter_number']]
+    assert [chapter['chapter_draft_id'] for chapter in chapters] == [first['draft_id'], second['draft_id']]
