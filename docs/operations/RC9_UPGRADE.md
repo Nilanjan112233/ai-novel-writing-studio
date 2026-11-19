@@ -3,12 +3,12 @@
 ## Supported update sequence
 
 1. Start the currently installed NovelForge version.
-2. Double-click `Back Up Before Update.cmd` and wait for every named project to
+2. Double-click `scripts/windows/backup-before-update.cmd` and wait for every named project to
    report completion.
 3. Move or copy `NovelForge Update Backups` outside the application folder.
 4. Replace application files with the supplied beta release while preserving
    Docker named volumes.
-5. Double-click `Update NovelForge.cmd`.
+5. Double-click `scripts/windows/update-novelforge.cmd`.
 6. Wait for readiness verification, then open several important projects and
    confirm prose, canon, decisions, Story Bible, drafts, and manuscript state.
 

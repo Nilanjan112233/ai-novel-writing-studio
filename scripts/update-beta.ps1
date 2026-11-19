@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 docker compose build --pull
 if ($LASTEXITCODE -ne 0) { throw 'The updated application image could not be built. Existing containers and data remain available.' }
 docker compose up -d
-if ($LASTEXITCODE -ne 0) { throw 'The updated application did not start. Data volumes remain preserved; restore the previous application files and run Start NovelForge.cmd.' }
+if ($LASTEXITCODE -ne 0) { throw 'The updated application did not start. Data volumes remain preserved; restore the previous application files and run scripts/windows/start-novelforge.cmd.' }
 $ready = $false
 for ($attempt = 1; $attempt -le 60; $attempt++) {
     try {
