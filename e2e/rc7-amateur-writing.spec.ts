@@ -14,7 +14,7 @@ test('RC7: an amateur author turns planning into a protected first draft with us
 
   await page.goto('/projects')
   await page.getByTestId('create-project-toggle').click()
-  await page.getByLabel('Title').fill(title)
+  await page.getByLabel('Project name').fill(title)
   await page.getByLabel('Genre').fill('Character-driven fantasy mystery')
   await page.getByLabel('Tone').fill('Intimate, tense, and quietly hopeful')
   await page.getByLabel('Story seed').fill(

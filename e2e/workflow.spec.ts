@@ -4,7 +4,7 @@ test('new project opens a real workspace without generated fallback content', as
   await page.goto('/projects')
   const title = `Workspace Shell ${Date.now()}`
   await page.getByTestId('create-project-toggle').click()
-  await page.fill('input#title', title)
+  await page.fill('input#project-name', title)
   await page.fill('textarea#idea_dump', 'A city archives dreams as legal evidence.')
   await page.fill('input#genre', 'Speculative mystery')
   await page.fill('input#tone', 'Investigative')

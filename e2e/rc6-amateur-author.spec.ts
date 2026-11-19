@@ -6,7 +6,7 @@ test('an amateur author can create a project, follow one path, and reach a first
   const title = `Remembering Roads ${Date.now()}`
   await page.goto('/projects')
   await page.getByTestId('create-project-toggle').click()
-  await page.getByLabel('Title').fill(title)
+  await page.getByLabel('Project name').fill(title)
   await page.getByLabel('Genre').fill('Fantasy mystery')
   await page.getByLabel('Tone').fill('Hopeful and eerie')
   await page.getByLabel('Story seed').fill('A mapmaker discovers a road that remembers everyone who vanished on it.')

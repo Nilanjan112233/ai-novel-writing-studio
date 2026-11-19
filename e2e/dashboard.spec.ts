@@ -14,7 +14,7 @@ test.describe('Projects workspace', () => {
   test('creates a project and opens the workspace', async ({ page }) => {
     const title = `Studio ${Date.now()}`
     await page.getByTestId('create-project-toggle').click()
-    await page.fill('input#title', title)
+    await page.fill('input#project-name', title)
     await page.fill('textarea#idea_dump', 'A sister becomes important after the first arc.')
     await page.fill('input#genre', 'Progression Fantasy')
     await page.fill('input#tone', 'Mythic')
