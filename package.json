@@ -6,7 +6,7 @@
     "dev": "tsx scripts/dev.ts",
     "test": "npm run test:frontend && npm run test:backend",
     "build": "npm run build --prefix frontend",
-    "test:backend": "cd backend && py -3.11 -m pytest --ignore=test-output-focused.txt",
+    "test:backend": "tsx scripts/test-backend.ts",
     "test:frontend": "npm run test --prefix frontend -- --run",
     "test:e2e": "npx playwright test",
     "lint": "npm run lint --prefix frontend",
