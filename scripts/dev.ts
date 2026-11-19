@@ -76,7 +76,11 @@ async function setupPorts() {
 function startBackend() {
   console.log('[dev] Starting backend...')
   const python = pythonCommand()
-  const proc = spawn(python.command, [...python.args, '-m', 'uvicorn', 'main:app', '--reload', '--host', '127.0.0.1', '--port', String(backendPort)], {
+  // Watch only the application package for auto-reload. Watching the whole
+  // backend folder also caught .venv, backups and exports written at runtime,
+  // which restarted the server in the middle of requests.
+  const reloadArgs = process.env.NOVELFORGE_NO_RELOAD ? [] : ['--reload', '--reload-dir', 'app']
+  const proc = spawn(python.command, [...python.args, '-m', 'uvicorn', 'main:app', ...reloadArgs, '--host', '127.0.0.1', '--port', String(backendPort)], {
     cwd: 'backend'
   })
 
