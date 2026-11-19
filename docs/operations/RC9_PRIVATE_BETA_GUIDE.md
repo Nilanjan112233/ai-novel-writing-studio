@@ -12,7 +12,7 @@ one bounded installation.
 1. Install Docker Desktop for Windows and allow it to finish starting.
 2. Extract the NovelForge beta folder to a location you control. Do not run it
    from inside a temporary ZIP preview.
-3. Double-click `Start NovelForge.cmd`.
+3. Double-click `scripts/windows/start-novelforge.cmd`.
 4. Wait for “NovelForge is ready,” then use the browser page that opens.
 5. Review the readiness card. Project storage, data compatibility, backup
    storage, publication storage, and AI are reported independently.
@@ -27,9 +27,9 @@ do not depend on an AI connection.
 
 ## Normal operation
 
-- Start or resume: `Start NovelForge.cmd`
-- Check problems: `Check NovelForge.cmd`
-- Stop safely: `Stop NovelForge.cmd`
+- Start or resume: `scripts/windows/start-novelforge.cmd`
+- Check problems: `scripts/windows/check-novelforge.cmd`
+- Stop safely: `scripts/windows/stop-novelforge.cmd`
 - Application: <http://localhost:3000>
 
 The launcher never stops an unrelated process to obtain a port. A port conflict
@@ -72,8 +72,8 @@ failure with sanitized operational records.
 ## Uninstall and data preservation
 
 Removing or replacing the extracted application folder does not itself delete
-Docker named volumes. `Stop NovelForge.cmd` also preserves them. Before any
-update or uninstall, run `Back Up Before Update.cmd` and move the downloaded
+Docker named volumes. `scripts/windows/stop-novelforge.cmd` also preserves them. Before any
+update or uninstall, run `scripts/windows/backup-before-update.cmd` and move the downloaded
 archives to a folder outside the NovelForge installation.
 
 Never run `docker compose down --volumes` or delete Docker volumes unless you

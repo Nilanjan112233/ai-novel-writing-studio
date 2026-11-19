@@ -38,7 +38,7 @@ uncompressed size, and archives containing more than one project authority.
 - Current project: **Project → Settings → Back up and download**.
 - All projects: **AI Settings → Back up all projects**. Archives are written to
   the protected backup folder shown on the same screen.
-- Before update: double-click `Back Up Before Update.cmd`. This downloads a
+- Before update: double-click `scripts/windows/backup-before-update.cmd`. This downloads a
   separate archive for every active or archived project into
   `NovelForge Update Backups`.
 

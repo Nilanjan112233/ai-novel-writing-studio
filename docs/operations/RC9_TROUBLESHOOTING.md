@@ -1,13 +1,13 @@
 # RC9 Troubleshooting
 
-Run `Check NovelForge.cmd` first. It reports whether the local services, project
+Run `scripts/windows/check-novelforge.cmd` first. It reports whether the local services, project
 storage, data format, backup folder, publication folder, and AI connection are
 ready. A failed AI check does not mean the project database is unavailable.
 
 ## Docker Desktop is not running
 
 Start Docker Desktop, wait until it reports that its engine is ready, then run
-`Start NovelForge.cmd` again. No NovelForge data is changed by this failure.
+`scripts/windows/start-novelforge.cmd` again. No NovelForge data is changed by this failure.
 
 ## Port 3000, 8000, or 27017 is occupied
 
@@ -19,7 +19,7 @@ process merely to make startup pass.
 
 Do not continue editing in a screen that reports a failed save. Keep the error
 visible and retain its support reference. Check Docker Desktop and
-`Check NovelForge.cmd`; restart NovelForge after storage is healthy. If the
+`scripts/windows/check-novelforge.cmd`; restart NovelForge after storage is healthy. If the
 database volume cannot be recovered, install a clean instance and import a
 downloaded `.novelforge-backup`.
 

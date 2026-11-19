@@ -16,7 +16,7 @@ if ($LASTEXITCODE -ne 0) {
 
     docker compose up -d --no-build
     if ($LASTEXITCODE -ne 0) {
-        throw 'NovelForge was installed but could not start. Existing Docker volumes were preserved. Run Check NovelForge.cmd for details.'
+        throw 'NovelForge was installed but could not start. Existing Docker volumes were preserved. Run scripts/windows/check-novelforge.cmd for details.'
     }
 }
 

@@ -9,6 +9,6 @@ try {
         Write-Host (" - {0}: {1} - {2}" -f $entry.Name, $entry.Value.status, $entry.Value.explanation)
     }
 } catch {
-    Write-Warning 'NovelForge is not reachable. Run Start NovelForge.cmd. Existing Docker data has not been changed.'
+    Write-Warning 'NovelForge is not reachable. Run scripts/windows/start-novelforge.cmd. Existing Docker data has not been changed.'
     exit 1
 }
