@@ -94,6 +94,28 @@ def _unique(values: Iterable[Any]) -> list[Any]:
     return result
 
 
+def _splice_selected_revision(source_text: str, selected_text: str, revised_text: str) -> str:
+    """Put a revised passage back into the full source text.
+
+    If the model already returned something chapter-sized, it is kept as is.
+    Otherwise the selected passage is replaced in place (whitespace-tolerant,
+    because text selected in the browser may differ in line breaks).
+    """
+    selected = selected_text.strip()
+    revised = revised_text.strip()
+    if not selected or not revised or len(revised) >= 0.8 * len(source_text):
+        return revised_text
+    if selected in source_text:
+        return source_text.replace(selected, revised, 1)
+    pattern = r"\s+".join(re.escape(token) for token in selected.split())
+    match = re.search(pattern, source_text)
+    if match:
+        return source_text[: match.start()] + revised + source_text[match.end():]
+    raise ValueError(
+        "The selected passage was not found in the chapter. Select the text again and retry."
+    )
+
+
 def _humanization_quality_failure(source_text: str, generated_text: str) -> str | None:
     """Reject light polish that silently turns a chapter into a summary."""
     source_words = len(re.findall(r"\b[\w'-]+\b", source_text or ""))
@@ -916,6 +938,7 @@ class EditorialService:
         revision_pass: str | None = None,
         request_id: str | None = None,
         model_preference: str = "auto",
+        selected_text: str | None = None,
     ) -> Dict[str, Any]:
         if not change_reason.strip():
             raise ValueError("change_reason is required")
@@ -1044,6 +1067,14 @@ class EditorialService:
             metadata["quality_escalation_reason"] = quality_issue
             proposal = fallback_proposal
             generated_text = fallback_text
+        if selected_text:
+            # A focused edit asks the model to rewrite one passage. Models
+            # usually return just that passage; the proposal must still be the
+            # whole chapter, or applying it would replace the chapter with one
+            # paragraph.
+            generated_text = _splice_selected_revision(
+                source_text, selected_text, generated_text
+            )
         latest = await db.revision_versions.find_one(
             {"project_id": pid, "branch_id": branch_id},
             sort=[("version_number", -1)],
@@ -1219,14 +1250,20 @@ class EditorialService:
         )
         if not source:
             raise ValueError("Source draft not found")
+        lineage: Dict[str, Any] = {"project_id": pid, identity: source[identity]}
+        if draft_type != "scene" and not source.get("chapter_plan_id"):
+            # Chapters written with "Start writing now" have no chapter plan.
+            # Matching on chapter_plan_id=None would touch every such chapter
+            # in the project, so scope the lineage to this chapter number.
+            lineage["chapter_number"] = source.get("chapter_number")
         latest = await db[collection].find_one(
-            {"project_id": pid, identity: source[identity]},
+            lineage,
             sort=[("version_number", -1)],
         )
         next_version = int((latest or {}).get("version_number") or 0) + 1
         now = datetime.utcnow()
         await db[collection].update_many(
-            {"project_id": pid, identity: source[identity], "active": True},
+            {**lineage, "active": True},
             {"$set": {"active": False, "updated_at": now}},
         )
         promoted = {
@@ -1263,6 +1300,7 @@ class EditorialService:
                 "status": "review",
                 "active": True,
                 "generated_text": revision["generated_text"],
+                "word_count": len(str(revision["generated_text"] or "").split()),
                 "generated_by": "RevisionAgent",
                 "operation": revision.get("revision_pass") or "revision",
                 "why": revision.get("reason") or revision.get("change_reason"),
@@ -1378,7 +1416,9 @@ class EditorialService:
             project_id,
             branch["source_draft_type"],
             branch["source_draft_id"],
-            approved=True,
+            # Same rule as creating, generating and applying a revision; a
+            # chapter in review must be comparable before the author applies it.
+            allowed_statuses={"review", "approved"},
         )
         query: Dict[str, Any] = {"project_id": pid, "branch_id": branch_id}
         if revision_id:
@@ -1395,7 +1435,7 @@ class EditorialService:
             difflib.unified_diff(
                 source_text.splitlines(),
                 revision_text.splitlines(),
-                fromfile="approved-source",
+                fromfile="source",
                 tofile=f"revision-{revision['version_number']}",
                 lineterm="",
             )

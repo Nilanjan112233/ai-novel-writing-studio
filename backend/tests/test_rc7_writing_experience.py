@@ -262,6 +262,13 @@ def test_review_stage_revision_pass_promotes_only_after_author_approval(client):
     assert proposal["estimated_improvement"]
     assert proposal["what_stays_unchanged"]
 
+    # The author compares before applying, while the source is still in review.
+    comparison = client.get(
+        f"/api/projects/{project_id}/revision-branches/{branch['branch_id']}/compare"
+    )
+    assert comparison.status_code == 200, comparison.text
+    assert comparison.json()["source_text"] == original["generated_text"]
+
     assert client.put(
         f"/api/projects/{project_id}/revision-branches/{branch['branch_id']}/status",
         json={"status": "review"},
