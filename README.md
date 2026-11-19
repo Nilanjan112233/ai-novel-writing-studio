@@ -140,8 +140,8 @@ the Playwright suite against a MongoDB service container.
   and test IDs from before the workspace UI was redesigned (for example
   `primary-story-health-dashboard`), and the paragraph-editor and scene-writing
   specs need a real AI provider because the mock cannot produce schema-valid
-  scene prose. The e2e step in CI is therefore non-blocking until those specs
-  are updated. Backend (pytest), frontend (Vitest), lint and build all pass.
+  scene prose. Until those specs are updated, the e2e step in CI is expected
+  to fail. Backend (pytest), frontend (Vitest), lint and build all pass.
 - `npm run dev` auto-reloads the backend when files in `backend/app` change.
   Set `NOVELFORGE_NO_RELOAD=1` to turn that off.
 
