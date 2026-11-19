@@ -6,7 +6,8 @@ import type {
   WorkspaceBootstrap,
 } from '@/types'
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+// The backend listens on port 8000 by default (see scripts/dev.ts and docker-compose.yml).
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const api = axios.create({
   baseURL: API_BASE,
