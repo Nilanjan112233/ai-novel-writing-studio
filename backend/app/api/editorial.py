@@ -185,11 +185,16 @@ async def create_revision_branch(project_id: str, payload: dict):
 async def create_selection_revision(project_id: str, draft_id: str, payload: dict):
     """Create a protected revision proposal for a selected passage."""
     db = Database.get_db()
-    await _project(db, project_id)
+    pid = await _project(db, project_id)
     selected_text = str(payload.get("selected_text") or "").strip()
     instruction = str(payload.get("instruction") or "").strip()
     if not selected_text or not instruction:
         raise HTTPException(status_code=400, detail="selected_text and instruction are required")
+    source = await db.chapter_drafts.find_one({"project_id": pid, "draft_id": draft_id}, {"generated_text": 1})
+    if source and " ".join(selected_text.split()) not in " ".join(str(source.get("generated_text") or "").split()):
+        # Check before spending any AI calls: the revised passage is spliced
+        # back into the chapter at this exact spot.
+        raise HTTPException(status_code=409, detail="The selected passage was not found in this chapter version. Select the text again and retry.")
     try:
         await editorial_service.request_review(db, project_id, subject_type="chapter", subject_id=draft_id, report_type="editorial")
         branch = await editorial_service.create_branch(
@@ -209,6 +214,7 @@ async def create_selection_revision(project_id: str, draft_id: str, payload: dic
                 f"Selected passage:\n{selected_text}\nAuthor instruction: {instruction}"
             ),
             revision_pass="line",
+            selected_text=selected_text,
         )
         return {"branch": branch, "revision": revision, "selected_text": selected_text}
     except ValueError as exc:

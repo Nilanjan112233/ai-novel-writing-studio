@@ -57,3 +57,61 @@ def test_discovery_approval_keeps_core_approval_separate_from_enrichment(client:
     assert approved['draft']['status'] == 'approved'
     assert approved['draft']['enrichment_status'] in {'completed', 'failed'}
     assert 'enrichment' in approved
+
+
+def test_selection_revision_keeps_the_rest_of_the_chapter(client: TestClient, sample_project: dict, monkeypatch):
+    """A focused edit of one passage must not replace the whole chapter (found in a real-AI run)."""
+    from app.services.editorial_service import editorial_service
+
+    project_id = _project(client, sample_project)
+    first = _approve(client, project_id, 'Open in the lighthouse.')['draft']
+    second = _approve(client, project_id, 'Continue at the harbour.')['draft']
+    chapter_text = 'Ada climbed the stairs.\n\nThe lamp room smelled of salt and old oil.\n\nShe opened the log.'
+    edited = client.put(
+        f"/api/projects/{project_id}/chapter-drafts/{first['draft_id']}/content",
+        json={'edited_text': chapter_text},
+    )
+    assert edited.status_code == 200, edited.text
+    source = edited.json()['draft']
+    if source['status'] != 'review':
+        assert client.put(f"/api/projects/{project_id}/chapter-drafts/{source['draft_id']}/status", json={'status': 'review'}).status_code == 200
+
+    original_execute = editorial_service._execute
+
+    async def fake_execute(db, **kwargs):
+        if kwargs.get('agent_name') != 'RevisionAgent':
+            return await original_execute(db, **kwargs)
+        # Like the real model: only the revised passage comes back.
+        return {'revision_proposal': {'generated_text': 'The lamp room reeked of brine and burnt wick.'}}, {}
+
+    monkeypatch.setattr(editorial_service, '_execute', fake_execute)
+    missing = client.post(
+        f"/api/projects/{project_id}/chapter-drafts/{source['draft_id']}/selection-revision",
+        json={'selected_text': 'Not in this chapter.', 'instruction': 'Sharpen it.'},
+    )
+    assert missing.status_code == 409
+    response = client.post(
+        f"/api/projects/{project_id}/chapter-drafts/{source['draft_id']}/selection-revision",
+        json={'selected_text': 'The lamp room smelled of salt and old oil.', 'instruction': 'Make it sharper.'},
+    )
+    assert response.status_code == 200, response.text
+    branch_id = response.json()['branch']['branch_id']
+    assert response.json()['revision']['generated_text'] == (
+        'Ada climbed the stairs.\n\nThe lamp room reeked of brine and burnt wick.\n\nShe opened the log.'
+    )
+
+    compared = client.get(f"/api/projects/{project_id}/revision-branches/{branch_id}/compare")
+    assert compared.status_code == 200, compared.text
+    for status in ('review', 'approved'):
+        assert client.put(f"/api/projects/{project_id}/revision-branches/{branch_id}/status", json={'status': status}).status_code == 200
+    applied = client.post(f"/api/projects/{project_id}/revision-branches/{branch_id}/apply")
+    assert applied.status_code == 200, applied.text
+    promoted = applied.json()['draft']
+    assert promoted['chapter_number'] == source['chapter_number']
+    assert promoted['word_count'] == len(promoted['generated_text'].split())
+    assert 'Ada climbed the stairs.' in promoted['generated_text']
+
+    # Applying a revision to chapter 1 must leave the other chapter active.
+    drafts = client.get(f'/api/projects/{project_id}/chapter-drafts').json()
+    other = next(item for item in drafts if item['draft_id'] == second['draft_id'])
+    assert other['active'] is True
