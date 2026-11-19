@@ -24,8 +24,9 @@ control: AI output is a suggestion until the author approves it.
   mysteries). The author confirms or rejects each one before it becomes canon.
 - **Check consistency**: a Story Health dashboard scores continuity, canon
   conflicts, open promises and pacing from the saved data.
-- **Finish the book**: assemble approved chapters into a manuscript and export
-  Markdown, plain text, HTML, DOCX, EPUB or PDF.
+- **Finish the book**: assemble approved chapters into a manuscript and, once
+  the publication readiness checks pass (canon completeness, open mysteries
+  resolved or deferred), export Markdown, plain text, HTML, DOCX, EPUB or PDF.
 - **Use any AI provider**: Google Gemini, OpenRouter, OpenAI, Anthropic, Groq
   or a local Ollama model, with automatic retry and fallback to the next
   provider. An offline mock provider lets you run everything without an API key.
@@ -43,8 +44,16 @@ Short walkthrough (about 30 seconds):
 
 ![Demo](docs/screenshots/demo.gif)
 
-*Screenshots use the sample project from `backend/scripts/seed_demo_project.py`
+*Screenshots above use the sample project from `backend/scripts/seed_demo_project.py`
 with the offline mock AI provider.*
+
+**With a real model** (OpenRouter `deepseek/deepseek-v4-flash` for writing,
+Gemini Flash-Lite for extraction): a chapter written from a one-line
+instruction, and the story facts extracted from it waiting for the author.
+
+| | |
+| --- | --- |
+| ![Real AI chapter](docs/screenshots/10-real-ai-chapter.png) **AI-written chapter** after one focused AI revision (version 4) | ![Real AI story facts](docs/screenshots/11-real-ai-story-facts.png) **Extracted characters and open mysteries** to confirm or reject |
 
 ## Architecture
 
@@ -123,7 +132,7 @@ double-click `scripts\windows\start-novelforge.cmd`. See
 ## Tests
 
 ```powershell
-npm run test:backend    # pytest (~210 tests), uses a throwaway MongoDB database
+npm run test:backend    # pytest (~220 tests), uses a throwaway MongoDB database
 npm run test:frontend   # Vitest (87 tests)
 npm run lint            # ESLint, zero warnings allowed
 npm run build           # Next.js production build + type check
@@ -136,12 +145,19 @@ the Playwright suite against a MongoDB service container.
 ### Known issues
 
 - **Playwright suite**: run offline (mock AI), 17 of 52 specs pass, 10 skip and
-  25 fail. The failures are not new: about half of the specs look for screens
-  and test IDs from before the workspace UI was redesigned (for example
-  `primary-story-health-dashboard`), and the paragraph-editor and scene-writing
-  specs need a real AI provider because the mock cannot produce schema-valid
-  scene prose. Until those specs are updated, the e2e step in CI is expected
-  to fail. Backend (pytest), frontend (Vitest), lint and build all pass.
+  25 fail. About half of the failing specs look for screens and test IDs from
+  before the workspace UI was redesigned (for example
+  `primary-story-health-dashboard`); the other half need a real AI provider,
+  because the mock cannot produce schema-valid scene prose. With a real
+  provider configured (Gemini Flash-Lite), 13 of the 14 AI specs pass. The one
+  that still fails (`orchestration-v2`) completes its AI run and then looks for
+  a pre-redesign sidebar button. Until the stale specs are updated, the e2e
+  step in CI (which has no API key) is expected to fail. Backend (pytest),
+  frontend (Vitest), lint and build all pass.
+- With a single provider selected ("full" execution mode), planning and scene
+  agents have no fallback provider, so an outage of that provider (for example
+  Gemini HTTP 503) fails the request after two retries. "Hybrid" mode adds
+  fallbacks. Chapter writing and story-fact extraction always have fallbacks.
 - `npm run dev` auto-reloads the backend when files in `backend/app` change.
   Set `NOVELFORGE_NO_RELOAD=1` to turn that off.
 

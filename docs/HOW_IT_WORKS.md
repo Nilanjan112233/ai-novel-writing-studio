@@ -113,6 +113,11 @@ AI model**. That keeps the scores consistent between runs and costs nothing.
 `publication_service.py` assembles approved chapters into a manuscript and
 writes Markdown, text, HTML, DOCX, EPUB and PDF (PDF via ReportLab).
 
+Export is gated: `publication_service.preflight()` blocks it until the
+manuscript is validated and approved and the story passes readiness checks
+(canon completeness, open mysteries resolved or deferred). A two-chapter draft
+is not "publication ready" by design.
+
 ## The provider gateway (multi-LLM failover)
 
 Every model call in the backend goes through one function:
@@ -198,6 +203,18 @@ spending; each call's tokens and estimated cost are recorded.
 With `USE_MOCK_LLM=true`, a deterministic mock provider stands in for real
 models. The pytest suite runs against a throwaway MongoDB database that is
 dropped afterwards, and Playwright tests use a separate `*_e2e` database.
+
+**What did testing with real models find that the mock did not?**
+A run with real providers (OpenRouter and Gemini) found four bugs the mock
+could not show. (1) A focused "revise this paragraph" edit got back only the
+paragraph, and applying it replaced the whole chapter; the passage is now
+spliced back in. (2) Gemini's JSON mode returned a bare list, which the
+gateway rejected as invalid JSON, so every Gemini extraction failed over to
+another provider; lists are now accepted where the caller expects one.
+(3) Chapters written without a chapter plan could not be assembled into a
+manuscript. (4) Writing calls were traced without a project ID, so
+per-project cost reports left them out. Each fix has a regression test that
+runs on the mock.
 
 **Why MongoDB and not PostgreSQL?**
 The data is document-shaped and varies a lot between record types, and the API
