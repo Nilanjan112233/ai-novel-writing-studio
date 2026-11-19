@@ -197,6 +197,12 @@ export default function ProjectWorkspacePage() {
   const [writingState, setWritingState] = useState<WritingState | null>(null)
   const [editorialFocusDraftId, setEditorialFocusDraftId] = useState<string | null>(null)
   const [recentSections, setRecentSections] = useState<string[]>([])
+  // The first entry is the current section; "dashboard" has no sidebar entry.
+  // Filter before rendering so an empty "Recent" heading is never shown.
+  const visibleRecentSections = useMemo(
+    () => recentSections.slice(1).filter((id) => sectionDefinitions.has(id)),
+    [recentSections],
+  )
   const [customAnswers, setCustomAnswers] = useState<Record<string, string>>({})
   const [proposalAction, setProposalAction] = useState<{ messageId: string; action: string; note: string } | null>(null)
   const [storyKnowledgeCandidates, setStoryKnowledgeCandidates] = useState<any[]>([])
@@ -1146,12 +1152,11 @@ export default function ProjectWorkspacePage() {
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Toolbox</h2>
             </div>
             <nav className="flex-1 overflow-y-auto p-2">
-              {recentSections.length > 1 ? (
+              {visibleRecentSections.length > 0 ? (
                 <div className="mb-3 border-b pb-3" data-testid="recent-destinations">
                   <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Recent</p>
-                  {recentSections.slice(1).map((id) => {
-                    const definition = sectionDefinitions.get(id)
-                    if (!definition) return null
+                  {visibleRecentSections.map((id) => {
+                    const definition = sectionDefinitions.get(id)!
                     const RecentIcon = definition.Icon
                     return <button key={id} type="button" onClick={() => setSection(id)} className="mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-accent/50"><RecentIcon className="h-3.5 w-3.5" /><span className="truncate">{definition.label}</span></button>
                   })}
