@@ -175,7 +175,7 @@ class DiscoveryWritingService:
                "desire and pressure, reveal the world through action, and leave a compelling unanswered question or "
                "consequence for Chapter 2. Do not dump backstory or resolve the central premise. " if chapter_number == 1 else "")
         )
-        result = await provider_gateway.generate_with_failover(db, [{"role": "system", "content": system_prompt}, {"role": "user", "content": json.dumps(prompt, ensure_ascii=True, default=str)}], provider=settings.default_provider, model=settings.default_model, fallbacks=[{"provider": "openrouter", "model": "deepseek/deepseek-v4-flash"}, {"provider": "gemini", "model": "gemini-2.5-flash"}], temperature=0.82, max_tokens=min(maximum * 2, 24000), agent_name="DiscoveryWriterAgent", expect_json=False)
+        result = await provider_gateway.generate_with_failover(db, [{"role": "system", "content": system_prompt}, {"role": "user", "content": json.dumps(prompt, ensure_ascii=True, default=str)}], provider=settings.default_provider, model=settings.default_model, fallbacks=[{"provider": "openrouter", "model": "deepseek/deepseek-v4-flash"}, {"provider": "gemini", "model": "gemini-2.5-flash"}], temperature=0.82, max_tokens=min(maximum * 2, 24000), agent_name="DiscoveryWriterAgent", expect_json=False, trace_context={"project_id": project_id})
         generated = str(result.get("content") or "").strip()
         if not generated:
             raise ValueError("Discovery Writer returned no prose")
@@ -201,6 +201,7 @@ class DiscoveryWritingService:
                 max_tokens=min(maximum * 2, 24000),
                 agent_name="DiscoveryRangeEditor",
                 expect_json=False,
+                trace_context={"project_id": project_id},
             )
             corrected = str(correction.get("content") or "").strip()
             if corrected:
@@ -218,6 +219,7 @@ class DiscoveryWritingService:
                 max_tokens=min(max(needed * 3, 600), 6000),
                 agent_name="DiscoveryRangeContinuation",
                 expect_json=False,
+                trace_context={"project_id": project_id},
             )
             addition = str(continuation.get("content") or "").strip()
             if addition:
@@ -248,6 +250,7 @@ class DiscoveryWritingService:
                 max_tokens=min(maximum * 2, 24000),
                 agent_name="DiscoveryRangeCompression",
                 expect_json=False,
+                trace_context={"project_id": project_id},
             )
             compressed = str(final_correction.get("content") or "").strip()
             if compressed:
@@ -272,7 +275,7 @@ class DiscoveryWritingService:
         extraction_result: Dict[str, Any] = {}
         try:
             route = await task_routing_service.select("extraction")
-            extraction_result = await provider_gateway.generate_with_failover(db, [{"role": "system", "content": "Extract only observable candidate story knowledge from the supplied prose. Return a JSON object of the form {\"candidates\": [{\"type\": ..., \"description\": ...}]}. Never claim approval or canon status. Include concrete names, relationships, objects, injuries, promises, mysteries, world rules, timeline events, POV, tone, and unresolved elements. Each candidate must be a concise object with type and description. Do not return an empty list when the prose clearly contains these."}, {"role": "user", "content": json.dumps({"chapter_number": draft.get("chapter_number"), "prose": text, "candidate_types": ["character", "relationship", "world_fact", "timeline_event", "knowledge_change", "mystery", "promise", "plot_thread", "foreshadowing", "artifact", "pov_style", "unresolved_element"]}, ensure_ascii=True)}], provider=route["provider"], model=route["model"], fallbacks=route.get("fallbacks"), temperature=0.1, max_tokens=3000, agent_name="DiscoveryExtractionAgent", expect_json=True, json_list_key="candidates", trace_context={"task_tier": route.get("tier"), "routing_reason": route.get("reason"), "task": "extraction"})
+            extraction_result = await provider_gateway.generate_with_failover(db, [{"role": "system", "content": "Extract only observable candidate story knowledge from the supplied prose. Return a JSON object of the form {\"candidates\": [{\"type\": ..., \"description\": ...}]}. Never claim approval or canon status. Include concrete names, relationships, objects, injuries, promises, mysteries, world rules, timeline events, POV, tone, and unresolved elements. Each candidate must be a concise object with type and description. Do not return an empty list when the prose clearly contains these."}, {"role": "user", "content": json.dumps({"chapter_number": draft.get("chapter_number"), "prose": text, "candidate_types": ["character", "relationship", "world_fact", "timeline_event", "knowledge_change", "mystery", "promise", "plot_thread", "foreshadowing", "artifact", "pov_style", "unresolved_element"]}, ensure_ascii=True)}], provider=route["provider"], model=route["model"], fallbacks=route.get("fallbacks"), temperature=0.1, max_tokens=3000, agent_name="DiscoveryExtractionAgent", expect_json=True, json_list_key="candidates", trace_context={"project_id": project_id, "task_tier": route.get("tier"), "routing_reason": route.get("reason"), "task": "extraction"})
             candidates = [item for item in (extraction_result.get("parsed") or {}).get("candidates") or [] if isinstance(item, dict)][:100]
             if not candidates:
                 candidates = _extract_fallback(text)

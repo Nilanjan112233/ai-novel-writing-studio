@@ -132,3 +132,21 @@ def test_discovery_chapters_assemble_into_a_manuscript(client: TestClient, sampl
     chapters = version['source_chapters']
     assert [chapter['chapter_number'] for chapter in chapters] == [first['chapter_number'], second['chapter_number']]
     assert [chapter['chapter_draft_id'] for chapter in chapters] == [first['draft_id'], second['draft_id']]
+
+
+def test_discovery_writing_traces_carry_the_project(client: TestClient, sample_project: dict):
+    """Per-project cost and token reports need project_id on every AI trace."""
+    from bson import ObjectId
+    from pymongo import MongoClient
+
+    from app.core.config import settings as app_config
+
+    project_id = _project(client, sample_project)
+    _approve(client, project_id, 'Open in the lighthouse.')
+    mongo = MongoClient(app_config.mongodb_url)
+    try:
+        traces = mongo[app_config.database_name].execution_traces
+        agents = set(traces.distinct('agent_name', {'project_id': ObjectId(project_id)}))
+        assert {'DiscoveryWriterAgent', 'DiscoveryExtractionAgent'} <= agents
+    finally:
+        mongo.close()
