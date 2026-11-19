@@ -82,6 +82,20 @@ def estimate_tokens(text: str) -> int:
     return max(1, len(text or "") // 4)
 
 
+def _wrap_json_list(content: Any, key: str) -> Dict[str, Any] | None:
+    """Return {key: [...]} when content is a bare JSON list, else None."""
+    text = str(content or "").strip()
+    if text.startswith("```"):
+        text = text.strip("`").strip()
+        if text.lower().startswith("json"):
+            text = text[4:].strip()
+    try:
+        value = json.loads(text)
+    except (TypeError, ValueError):
+        return None
+    return {key: value} if isinstance(value, list) else None
+
+
 def _usage_from_response(data: Dict[str, Any], content: str) -> int:
     usage = data.get("usage") or data.get("usageMetadata") or {}
     total = usage.get("total_tokens") or usage.get("total_token_count")
@@ -219,7 +233,13 @@ class ProviderGateway:
         agent_name: str | None = None,
         expect_json: bool = False,
         trace_context: Dict[str, Any] | None = None,
+        json_list_key: str | None = None,
     ) -> Dict[str, Any]:
+        """Call providers in order with retries.
+
+        json_list_key: for prompts that ask for {"<key>": [...]}, also accept a
+        bare JSON list (Gemini's JSON mode often returns one) and wrap it.
+        """
         attempts = [{"provider": provider, "model": model}] + (fallbacks or [])
         errors = []
         for attempt_index, attempt in enumerate(attempts):
@@ -244,6 +264,8 @@ class ProviderGateway:
                             agent_name=agent_name,
                             expect_json=expect_json,
                         )
+                        if expect_json and json_list_key and not isinstance(result.get("parsed"), dict):
+                            result["parsed"] = _wrap_json_list(result.get("content"), json_list_key)
                         if expect_json and not isinstance(result.get("parsed"), dict):
                             raise ProviderError(
                                 "INVALID_JSON",
@@ -281,13 +303,14 @@ class ProviderGateway:
                             }
                         )
                         logger.warning(
-                            "Transient provider failure; retrying provider=%s model=%s agent=%s retry=%s delay=%ss error_type=%s",
+                            "Transient provider failure; retrying provider=%s model=%s agent=%s retry=%s delay=%ss error_type=%s detail=%s",
                             attempt_provider,
                             attempt_model,
                             agent_name,
                             retry_count,
                             delay_seconds,
                             retry_error.error_type,
+                            str(retry_error)[:300],
                         )
                         await asyncio.sleep(delay_seconds)
                 await provider_health_service.record_success(
@@ -517,9 +540,17 @@ class ProviderGateway:
             message = choices[0].get("message", {}) if choices and isinstance(choices[0], dict) else {}
             content = message.get("content")
             if not isinstance(content, str) or not content.strip():
+                # Reasoning models can spend the whole max_tokens budget on hidden
+                # reasoning and return no visible text. Put the finish reason and
+                # token counts in the error so the retry log explains itself.
+                finish_reason = choices[0].get("finish_reason") if choices and isinstance(choices[0], dict) else None
+                usage = data.get("usage") or {}
+                reasoning_tokens = (usage.get("completion_tokens_details") or {}).get("reasoning_tokens")
                 raise ProviderError(
                     "EMPTY_RESPONSE",
-                    f"{provider} returned no text content.",
+                    f"{provider} returned no text content "
+                    f"(finish_reason={finish_reason}, completion_tokens={usage.get('completion_tokens')}, "
+                    f"reasoning_tokens={reasoning_tokens}, max_tokens={max_tokens}).",
                     provider,
                     model,
                     response.status_code,
