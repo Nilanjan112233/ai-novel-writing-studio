@@ -330,6 +330,20 @@ class SettingsService:
                 "default_model": verified.get("model") if verified else "",
             })
             await self.save_app_settings({"execution": execution})
+        elif (
+            app_config.use_mock_llm
+            and execution.get("execution_mode") != "mock"
+            and not str(execution.get("default_model") or "").strip()
+        ):
+            # Offline/demo mode (USE_MOCK_LLM=true) with no real model chosen yet:
+            # route AI work to the built-in mock provider instead of failing with
+            # "gemini does not support model ''". Not persisted, so choosing a
+            # real model in Settings takes over immediately.
+            execution.update({
+                "execution_mode": "mock",
+                "default_provider": "mock",
+                "default_model": "mock-narrative-intelligence",
+            })
         return execution
 
     async def save_execution_settings(self, execution: Dict[str, Any]) -> Dict[str, Any]:

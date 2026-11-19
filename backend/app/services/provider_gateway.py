@@ -91,14 +91,39 @@ def _usage_from_response(data: Dict[str, Any], content: str) -> int:
     return estimate_tokens(content)
 
 
-def _mock_response(messages: List[Dict[str, str]], agent_name: str | None = None) -> Dict[str, Any]:
+MOCK_PROSE = (
+    "[Offline mock draft - configure an AI provider in Settings for real prose.] "
+    "The lamp turned slowly above the harbour while the narrator weighed what "
+    "had changed since the last chapter. A small choice was made, a question "
+    "was left open, and the story moved one step forward."
+)
+
+
+def _mock_response(
+    messages: List[Dict[str, str]],
+    agent_name: str | None = None,
+    expect_json: bool = True,
+) -> Dict[str, Any]:
+    """Deterministic offline response used when USE_MOCK_LLM=true.
+
+    Most requests get a small JSON status object. Prose-writing agents
+    (SceneWriterAgent, DiscoveryWriterAgent, DiscoveryRange*) get clearly
+    labelled placeholder prose instead, so the editor never shows raw JSON as
+    if it were story text.
+    """
     text = " ".join(message.get("content", "") for message in messages)
-    content = json.dumps({
-        "status": "ok",
-        "agent": agent_name or "MockAgent",
-        "summary": f"Mock cognition integrated {min(len(text), 240)} characters of context.",
-        "recommended_next_agents": ["ContinuityAgent"] if "contradiction" in text.lower() else [],
-    })
+    writes_prose = not expect_json and any(
+        marker in (agent_name or "") for marker in ("Writer", "DiscoveryRange")
+    )
+    if not writes_prose:
+        content = json.dumps({
+            "status": "ok",
+            "agent": agent_name or "MockAgent",
+            "summary": f"Mock cognition integrated {min(len(text), 240)} characters of context.",
+            "recommended_next_agents": ["ContinuityAgent"] if "contradiction" in text.lower() else [],
+        })
+    else:
+        content = MOCK_PROSE
     return {
         "content": content,
         "parsed": try_parse_json(content),
@@ -131,7 +156,7 @@ class ProviderGateway:
         )
         rate_limit_acquired_at = datetime.now(timezone.utc).isoformat()
         if provider == "mock":
-            result = _mock_response(messages, agent_name)
+            result = _mock_response(messages, agent_name, expect_json)
             result["rate_limit_wait_ms"] = rate_limit_wait_ms
             result["rate_limit_acquired_at"] = rate_limit_acquired_at
             return result
