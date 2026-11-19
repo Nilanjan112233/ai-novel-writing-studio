@@ -9,7 +9,7 @@ async function createWorkspace(page: any) {
   await page.goto('/projects')
   const title = `Visual Stability ${Date.now()}`
   await page.getByTestId('create-project-toggle').click()
-  await page.fill('input#title', title)
+  await page.fill('input#project-name', title)
   await page.fill('textarea#idea_dump', 'A prince hears dead gods beneath a divided kingdom.')
   await page.click('[data-testid="create-project"]')
   await expect(page).toHaveURL(/\/project\//, { timeout: 15000 })
