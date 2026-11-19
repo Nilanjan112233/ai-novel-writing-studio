@@ -29,6 +29,8 @@ const step = {
   details: '',
   source_mode: null,
   required: false,
+  can_skip: true,
+  can_edit: true,
   ai_prompt: 'Suggest a story idea.',
   completed_at: null,
 }
@@ -47,7 +49,8 @@ const flow = {
   completed_steps: 0,
   total_steps: 7,
   completion: 0,
-  next_action: { label: 'Add your story idea', target: 'vision' },
+  first_scene_ready: false,
+  next_action: { label: 'Add your story idea', target: 'vision', step_id: 'story_idea', reason: 'Start with the promise of the novel.' },
 }
 
 
