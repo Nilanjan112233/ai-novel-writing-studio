@@ -43,3 +43,8 @@ htmlcov/
 # Database
 *.db
 *.sqlite
+
+# Local runtime data: settings encryption key, backups, support bundles, exports
+data/
+exports/
+.venv/

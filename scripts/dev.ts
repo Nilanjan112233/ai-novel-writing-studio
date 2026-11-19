@@ -1,6 +1,8 @@
 import { spawn } from 'child_process'
 import * as net from 'net'
 import http from 'http'
+import fs from 'fs'
+import { pythonCommand } from './python'
 
 const FRONTEND_PORT = 3000
 const DEFAULT_BACKEND_PORT = 8000
@@ -67,14 +69,14 @@ async function setupPorts() {
     console.log(`[dev] Backend port ${DEFAULT_BACKEND_PORT} is still occupied; using ${backendPort}`)
   }
 
-  const fs = await import('fs')
   fs.writeFileSync('.novelforge-ports.json', JSON.stringify({ frontendPort: FRONTEND_PORT, backendPort }, null, 2))
   console.log('[dev] Ports are ready')
 }
 
 function startBackend() {
   console.log('[dev] Starting backend...')
-  const proc = spawn('py', ['-3.11', '-m', 'uvicorn', 'main:app', '--reload', '--host', '127.0.0.1', '--port', String(backendPort)], {
+  const python = pythonCommand()
+  const proc = spawn(python.command, [...python.args, '-m', 'uvicorn', 'main:app', '--reload', '--host', '127.0.0.1', '--port', String(backendPort)], {
     cwd: 'backend'
   })
 

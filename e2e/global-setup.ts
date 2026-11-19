@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { MongoClient } from 'mongodb'
+import { pythonCommand } from '../scripts/python'
 
 const statePath = path.join(process.cwd(), 'artifacts', 'playwright-e2e-project-state.json')
 const operationalCollections = ['project_backups', 'restore_operations', 'support_bundles', 'beta_feedback']
@@ -50,7 +51,8 @@ export default async function globalSetup() {
       title: 'Phase 3C Validation: The Bell Beneath Winter',
     })
     if (!validationProject) {
-      execFileSync('py', ['-3.11', 'backend/scripts/run_phase_3c_validation.py'], {
+      const python = pythonCommand()
+      execFileSync(python.command, [...python.args, 'backend/scripts/run_phase_3c_validation.py'], {
         cwd: process.cwd(),
         env: {
           ...process.env,
