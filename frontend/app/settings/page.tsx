@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useSettingsStore } from '@/store/settingsStore'
 import { settingsApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -12,6 +13,14 @@ import OperationalReadinessPanel from '@/components/OperationalReadinessPanel'
 
 const PROVIDERS = ['gemini', 'groq', 'openrouter', 'openai', 'anthropic', 'ollama']
 const PRESETS = ['cheap', 'creative', 'balanced', 'drafting', 'continuity']
+const PROVIDER_LABELS: Record<string, string> = {
+  gemini: 'Google Gemini',
+  groq: 'Groq',
+  openrouter: 'OpenRouter',
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  ollama: 'Ollama (local)',
+}
 
 export default function SettingsPage() {
   const {
@@ -184,6 +193,13 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 space-y-6">
+        <nav className="flex items-center gap-4 text-sm text-muted-foreground" aria-label="Settings navigation">
+          <Link href="/" className="hover:text-foreground">NovelForge</Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/projects" className="hover:text-foreground">Projects</Link>
+          <span aria-hidden="true">/</span>
+          <span className="text-foreground">Settings</span>
+        </nav>
         <OperationalReadinessPanel />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -325,7 +341,7 @@ export default function SettingsPage() {
               return (
                 <div key={provider} className="flex h-full min-w-0 flex-col rounded-md border p-4 space-y-3" data-testid={`provider-card-${provider}`}>
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="truncate font-medium capitalize">{provider}</h3>
+                    <h3 className="truncate font-medium">{PROVIDER_LABELS[provider] || provider}</h3>
                     <span className={`text-xs uppercase ${providerStatus?.status === 'online' ? 'text-green-600' : providerStatus?.status === 'offline' ? 'text-red-600' : 'text-amber-600'}`}>
                       {providerStatus?.status || 'untested'}
                     </span>
