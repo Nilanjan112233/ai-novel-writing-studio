@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import { MongoClient, ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import fs from 'fs'
@@ -271,14 +272,13 @@ test.describe('Phase 3B manuscript and canon governance', () => {
     expect(persistedChapter?.generated_text).toBe(approvedText)
 
     await page.goto(`/project/${projectId}`)
-    await expect(page.getByTestId('section-manuscript')).toBeVisible()
-    await page.getByTestId('section-manuscript').click()
+    await openSection(page, 'manuscript')
     await expect(page.getByTestId('manuscript-workspace')).toContainText('The Eternal Throne')
     await page.screenshot({
       path: testInfo.outputPath('phase-3b-manuscript-workspace.png'),
       fullPage: true,
     })
-    await page.getByTestId('section-canon').click()
+    await openSection(page, 'canon')
     await expect(page.getByTestId('canon-dashboard')).toContainText('The Eternal Throne')
     await expect(page.getByTestId('canon-conflict')).toBeVisible()
     await page.screenshot({

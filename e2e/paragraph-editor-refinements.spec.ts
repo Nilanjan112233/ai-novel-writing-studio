@@ -7,6 +7,7 @@
  */
 
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -315,7 +316,7 @@ test.describe('Paragraph Editor Workspace Refinements', () => {
   test('Workspace renders three-panel layout and handles interactive toggles', async ({ page }) => {
     // Navigate to project workspace
     await page.goto(`/project/${projectId}`)
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
 
     // Open Paragraph Planning Board
     const planBtn = page.getByTestId(`plan-paragraphs-btn-${sceneId}`)

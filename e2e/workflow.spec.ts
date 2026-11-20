@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { openSection } from './nav'
 
 test('new project opens a real workspace without generated fallback content', async ({ page }) => {
   await page.goto('/projects')
@@ -12,9 +13,9 @@ test('new project opens a real workspace without generated fallback content', as
 
   await expect(page).toHaveURL(/\/project\//)
   await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible()
-  await page.getByTestId('section-vision').click()
+  await openSection(page, 'vision')
   await expect(page.getByTestId('story-vision-panel')).toContainText('A city archives dreams as legal evidence.')
-  await page.getByTestId('section-workflow').click()
+  await openSection(page, 'workflow')
   await expect(page.getByTestId('workflow-panel')).toContainText('Project activity will appear here after the story team completes its first task.')
   await expect(page.getByTestId('workflow-graph')).toHaveCount(0)
   await expect(page.locator('pre')).toHaveCount(0)

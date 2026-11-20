@@ -1,4 +1,5 @@
 import { expect, test, APIRequestContext, Page } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 function apiBaseUrl() {
@@ -190,7 +191,7 @@ test.describe('real Gemini Narrative Studio lifecycle', () => {
       ['settings', 'workspace-settings-panel'],
     ]
     for (const [section, panel] of pageChecks) {
-      await page.getByTestId(`section-${section}`).click()
+      await openSection(page, section)
       await expect(page.getByTestId(panel)).toBeVisible()
       await expect(page.getByTestId(panel)).not.toContainText(/mock cognition|placeholder|lorem ipsum/i)
       await expect(page.getByTestId(panel).locator('pre')).toHaveCount(0)
@@ -259,7 +260,7 @@ test.describe('real Gemini Narrative Studio lifecycle', () => {
       ['settings', 'workspace-settings-panel'],
     ]
     for (const [section, panel] of pageChecks) {
-      await page.getByTestId(`section-${section}`).click()
+      await openSection(page, section)
       await expect(page.getByTestId(panel)).toBeVisible()
       await expect(page.getByTestId(panel)).not.toContainText(/mock cognition|placeholder|lorem ipsum/i)
       await expect(page.getByTestId(panel).locator('pre')).toHaveCount(0)
@@ -267,11 +268,11 @@ test.describe('real Gemini Narrative Studio lifecycle', () => {
     }
 
     fs.mkdirSync('test-results', { recursive: true })
-    await page.getByTestId('section-discussion').click()
+    await openSection(page, 'discussion')
     await page.screenshot({ path: 'test-results/real-discussion-room.png', fullPage: true })
-    await page.getByTestId('section-relationships').click()
+    await openSection(page, 'relationships')
     await page.screenshot({ path: 'test-results/real-relationships.png', fullPage: true })
-    await page.getByTestId('section-workflow').click()
+    await openSection(page, 'workflow')
     await page.screenshot({ path: 'test-results/real-workflow.png', fullPage: true })
 
     const stored = await request.post(`${apiBase}/api/projects/${projectId}/test-results`, {

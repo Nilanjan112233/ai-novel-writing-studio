@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { openSection } from './nav'
 
 test.describe('Projects workspace', () => {
   test.beforeEach(async ({ page }) => {
@@ -6,7 +7,7 @@ test.describe('Projects workspace', () => {
   })
 
   test('shows project library controls', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Your novels' })).toBeVisible()
     await expect(page.getByTestId('project-search')).toBeVisible()
     await expect(page.getByTestId('create-project-toggle')).toBeVisible()
   })
@@ -20,10 +21,10 @@ test.describe('Projects workspace', () => {
     await page.fill('input#tone', 'Mythic')
     await page.getByTestId('create-project').click()
     await expect(page).toHaveURL(/\/project\//, { timeout: 15000 })
-    await expect(page.getByText('Narrative Intelligence Platform')).toBeVisible()
-    await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible()
-    await expect(page.getByTestId('section-discussion')).toBeVisible()
-    await page.getByTestId('section-discussion').click()
+    await expect(page.getByTestId('next-step-card')).toBeVisible()
+    await expect(page.getByTestId('book-progress')).toBeVisible()
+    await expect(page.getByTestId('primary-project-dashboard')).toBeVisible()
+    await openSection(page, 'discussion')
     await expect(page.getByTestId('workspace-run-discussion-cycle')).toBeVisible()
   })
 })

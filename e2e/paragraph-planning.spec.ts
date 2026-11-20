@@ -15,6 +15,7 @@
  */
 
 import { APIRequestContext, expect, test, Page } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -368,8 +369,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     // -- Step 2: Navigate to project and open Drafting --
     await page.goto(`/project/${projectId}`)
     await page.waitForLoadState('domcontentloaded')
-    await expect(page.getByTestId('section-drafting')).toBeVisible()
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await expect(page.getByTestId('drafting-workspace')).toBeVisible()
 
     // -- Step 3: Find and click "Plan Paragraphs" button --
@@ -404,7 +404,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     // Reload to pick up generated paragraphs
     await page.reload()
     await page.waitForLoadState('domcontentloaded')
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await page.getByTestId(`plan-paragraphs-btn-${sceneId}`).click()
     await expect(page.getByTestId('paragraph-planning-board')).toBeVisible()
 
@@ -487,7 +487,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     const approvedSceneId = sceneId
     await page.reload()
     await page.waitForLoadState('domcontentloaded')
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await page.getByTestId(`plan-paragraphs-btn-${approvedSceneId}`).click()
     await expect(page.getByTestId('paragraph-planning-board')).toBeVisible()
     // Should still show paragraphs
@@ -556,7 +556,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     // Navigate to board
     await page.goto(`/project/${projectId}`)
     await page.waitForLoadState('domcontentloaded')
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await page.getByTestId(`plan-paragraphs-btn-${sceneId}`).click()
     await expect(page.getByTestId('paragraph-planning-board')).toBeVisible()
     await page.waitForSelector('[data-testid^="paragraph-card-"]', { timeout: 10000 })
@@ -608,7 +608,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     // Navigate
     await page.goto(`/project/${projectId}`)
     await page.waitForLoadState('domcontentloaded')
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await page.getByTestId(`plan-paragraphs-btn-${sceneId}`).click()
     await expect(page.getByTestId('pipeline-bar')).toBeVisible()
 
@@ -667,7 +667,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     // Navigate and measure render
     await page.goto(`/project/${projectId}`)
     await page.waitForLoadState('domcontentloaded')
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await page.getByTestId(`plan-paragraphs-btn-${sceneId}`).click()
     await expect(page.getByTestId('paragraph-planning-board')).toBeVisible()
 
@@ -840,7 +840,7 @@ test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
     // UI: navigate to board and open history panel
     await page.goto(`/project/${projectId}`)
     await page.waitForLoadState('domcontentloaded')
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await page.getByTestId(`plan-paragraphs-btn-${sceneId}`).click()
     await page.waitForSelector('[data-testid^="paragraph-card-"]', { timeout: 10000 })
 

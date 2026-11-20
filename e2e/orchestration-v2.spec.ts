@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -199,7 +200,7 @@ test.describe('Phase 1A production orchestrator', () => {
 
     await page.goto(`/project/${projectId}`)
     await expect(page.getByTestId('run-status')).not.toContainText('running')
-    await page.getByTestId('section-workflow').click()
+    await openSection(page, 'workflow')
     await page.getByTestId('workflow-panel').getByRole('button', { name: 'Developer Mode' }).click()
     await expect(page.getByTestId('orchestration-inspector')).toBeVisible()
     await expect(page.getByTestId('orchestration-stop-reason')).toContainText(
