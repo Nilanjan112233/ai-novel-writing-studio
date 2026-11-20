@@ -100,19 +100,19 @@ export default function StoryHealthDashboard({
           {busyId === 'audit'
             ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             : <Search className="mr-2 h-4 w-4" />}
-          Run Story Audit
+          Run story check
         </Button>
       </div>
       <p className="rounded-lg border border-sky-100 bg-sky-50/60 p-3 text-sm text-sky-950">
         {notEnoughStory
-          ? 'There is not enough developed story material to judge consistency yet. Develop the story first; NovelForge will evaluate it as connected planning and writing appear.'
-          : 'This score measures narrative consistency—not how much you have written. Content completeness, draft progress, revision progress, and publication readiness are tracked separately in the production milestones.'}
+          ? 'There is not enough story yet to check. Plan and write a little more; the check runs as chapters are approved.'
+          : 'This score is about consistency (do the facts, timeline and characters agree?), not about how much you have written.'}
       </p>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" role="group" aria-label="Story context metrics, not scored progress">
         {metricCards.map(([label, value]) => (
           <div key={String(label)} className="rounded-md border p-3">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
+            <p className="text-xs font-medium text-muted-foreground">{label}</p>
             <p className="mt-1 text-2xl font-semibold">{value}</p>
           </div>
         ))}
@@ -123,13 +123,13 @@ export default function StoryHealthDashboard({
           <div>
             <div className="flex items-center gap-2">
               <Network className="h-5 w-5 text-sky-600" />
-              <h3 className="font-semibold">Narrative Intelligence</h3>
+              <h3 className="font-semibold">Consistency by area</h3>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              One analysis graph powers Story Health, Canon, Timeline, Characters, Plot Threads, and the Story Bible.
+              How consistent each part of the story is: characters, confirmed facts, timeline and plot threads.
             </p>
           </div>
-          <p className="max-w-sm text-right text-xs text-muted-foreground">Scores update after approved story changes and always retain their supporting evidence.</p>
+          <p className="max-w-sm text-right text-xs text-muted-foreground">Scores update when you approve chapters or confirm facts.</p>
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {intelligenceDomains.slice(1).map(([domain, label]) => (
@@ -188,14 +188,14 @@ export default function StoryHealthDashboard({
       <div className="grid gap-4 xl:grid-cols-2">
         <section className="rounded-md border p-4">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-semibold">Latest audit findings</h3>
+            <h3 className="font-semibold">Latest check findings</h3>
             <span className="text-xs text-muted-foreground">
               {latestAudit?.findings.length || 0} findings
             </span>
           </div>
           <div className="mt-3 max-h-96 space-y-2 overflow-y-auto">
             {!latestAudit?.findings.length ? (
-              <p className="text-sm text-muted-foreground">No story audit has been recorded.</p>
+              <p className="text-sm text-muted-foreground">No story check has been run yet.</p>
             ) : latestAudit.findings.slice(0, 40).map((finding, index) => (
               <div key={finding.finding_id || `${finding.category}-${index}`} className="rounded bg-muted p-3 text-sm">
                 <div className="flex items-start gap-2">

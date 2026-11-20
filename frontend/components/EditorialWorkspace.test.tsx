@@ -98,7 +98,7 @@ test('renders editorial scores, findings, branch lineage, and comparison', () =>
     />,
   )
 
-  expect(screen.getByTestId('editorial-workspace')).toHaveTextContent('Approved drafts remain authoritative')
+  expect(screen.getByTestId('editorial-workspace')).toHaveTextContent('Your chapters are never changed without you')
   expect(screen.getByTestId('editorial-score-card')).toHaveTextContent('84')
   expect(screen.getByTestId('editorial-report-card')).toHaveTextContent('emotional beat')
   expect(screen.getByTestId('revision-branch-card')).toHaveTextContent('Slow the reveal')

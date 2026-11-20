@@ -97,7 +97,7 @@ export default function ManuscriptWorkspace({
       if (preflight.ready) setExportError('Publication checks passed. Approve the manuscript to create the export package.')
       else setExportError('Publication is waiting on the items below. Your manuscript is unchanged.')
     } catch (error) {
-      setExportError(error instanceof Error ? error.message : 'Publication readiness could not be checked')
+      setExportError(error instanceof Error ? error.message : 'Export checks could not run. Your book is unchanged.')
     } finally {
       setExporting(false)
     }
@@ -116,11 +116,12 @@ export default function ManuscriptWorkspace({
 
   if (!active) {
     return (
-      <div className="space-y-3" data-testid="manuscript-workspace">
-        <p className="text-sm text-muted-foreground">
-          Create a governed manuscript when approved chapter drafts are ready.
+      <div className="flex flex-col items-center rounded-xl border border-dashed bg-muted/30 px-6 py-10 text-center" data-testid="manuscript-workspace">
+        <p className="text-base font-semibold">Put your book together</p>
+        <p className="mt-1 max-w-lg text-sm leading-6 text-muted-foreground">
+          This collects your approved chapters, in order, into one book. You can then have the AI read it through, approve it and export it as DOCX, EPUB, PDF, HTML, Markdown or plain text.
         </p>
-        <Button onClick={() => onCreate()}>Create Manuscript</Button>
+        <Button className="mt-4" onClick={() => onCreate()}>Create the book</Button>
       </div>
     )
   }
@@ -128,8 +129,8 @@ export default function ManuscriptWorkspace({
   return (
     <div className="space-y-5" data-testid="manuscript-workspace">
       <div className="rounded-md border bg-muted/30 p-3 text-sm">
-        <strong>Approved chapters remain authoritative.</strong>{' '}
-        Assembly preserves their text and records immutable source hashes.
+        <strong>Your approved chapters are copied in exactly as written.</strong>{' '}
+        Editing a chapter later does not change this book until you assemble it again.
       </div>
 
       <section className="rounded-md border p-4">
@@ -198,7 +199,7 @@ export default function ManuscriptWorkspace({
             Check publication readiness
           </Button>
         </div>
-        {active.status !== 'approved' ? <p className="mt-3 text-sm text-amber-800">Complete manuscript review, validation, and approval to unlock governed export.</p> : null}
+        {active.status !== 'approved' ? <p className="mt-3 text-sm text-amber-800">Review, check and approve the book to unlock export.</p> : null}
         {exportError ? <p className="mt-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-800" role="alert">{exportError}</p> : null}
         {publicationBlockers.length ? <div className="mt-3 space-y-2" data-testid="publication-blockers">
           {publicationBlockers.map((blocker, index) => <article key={`${blocker.destination}-${index}`} className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">

@@ -53,7 +53,7 @@ test('renders manuscript versions, validation, and manual approval controls', ()
     />,
   )
 
-  expect(screen.getByTestId('manuscript-workspace')).toHaveTextContent('Approved chapters remain authoritative')
+  expect(screen.getByTestId('manuscript-workspace')).toHaveTextContent('Your approved chapters are copied in exactly as written')
   expect(screen.getByTestId('manuscript-version')).toHaveTextContent('Version 2')
   expect(screen.getByTestId('manuscript-report')).toHaveTextContent('PASS')
   fireEvent.click(screen.getByText('Approve Manuscript'))
