@@ -8,6 +8,7 @@
 
 import { APIRequestContext, expect, test } from '@playwright/test'
 import { openSection } from './nav'
+import { NEEDS_REAL_AI, realAiConfigured } from './realAi'
 import fs from 'fs'
 
 function apiBaseUrl(): string {
@@ -293,6 +294,7 @@ test.describe('Paragraph Editor - Writing Assistant (AI Tools)', () => {
   test.beforeAll(async ({ request }) => {
     test.setTimeout(90000)
     const apiBase = apiBaseUrl()
+    test.skip(!(await realAiConfigured(request, apiBase)), NEEDS_REAL_AI)
     const scaffold = await scaffoldProject(request, apiBase, 'AISuggest')
     projectId = scaffold.projectId
     sceneId = scaffold.sceneId

@@ -8,6 +8,7 @@
 
 import { APIRequestContext, expect, test } from '@playwright/test'
 import { openSection } from './nav'
+import { NEEDS_REAL_AI, realAiConfigured } from './realAi'
 import fs from 'fs'
 
 
@@ -291,6 +292,7 @@ test.describe('Paragraph Editor Workspace Refinements', () => {
   test.beforeAll(async ({ request }) => {
     test.setTimeout(90000)
     const apiBase = apiBaseUrl()
+    test.skip(!(await realAiConfigured(request, apiBase)), NEEDS_REAL_AI)
     const scaffold = await scaffoldProject(request, apiBase, 'UXRefine')
     projectId = scaffold.projectId
     sceneId = scaffold.sceneId

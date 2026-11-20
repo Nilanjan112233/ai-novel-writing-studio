@@ -1,9 +1,12 @@
 import { expect, test } from '@playwright/test'
 import { openSection } from './nav'
+import { NEEDS_REAL_AI, backendUrl, realAiConfigured } from './realAi'
 
 
-test('RC7: an amateur author turns planning into a protected first draft with useful guidance', async ({ page }, testInfo) => {
+test('RC7: an amateur author turns planning into a protected first draft with useful guidance', async ({ page, request }, testInfo) => {
   test.setTimeout(420_000)
+  // The flow ends by generating scene prose, which the offline mock cannot write.
+  test.skip(!(await realAiConfigured(request, backendUrl())), NEEDS_REAL_AI)
   const title = `RC7 Amateur Draft ${Date.now()}`
   const consoleDefects: string[] = []
   page.on('console', (message) => {

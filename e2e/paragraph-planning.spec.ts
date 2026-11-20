@@ -16,6 +16,7 @@
 
 import { APIRequestContext, expect, test, Page } from '@playwright/test'
 import { openSection } from './nav'
+import { NEEDS_REAL_AI, realAiConfigured } from './realAi'
 import fs from 'fs'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -344,6 +345,11 @@ async function captureViewport(
 
 test.describe('Phase 4 RC2 — Paragraph Planning E2E', () => {
   test.setTimeout(600000)
+
+  // Every case generates scene paragraphs, which the offline mock cannot do.
+  test.beforeEach(async ({ request }) => {
+    test.skip(!(await realAiConfigured(request, apiBaseUrl())), NEEDS_REAL_AI)
+  })
 
   /**
    * TC-01: Complete user workflow

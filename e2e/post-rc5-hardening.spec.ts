@@ -99,7 +99,7 @@ test.describe('post-RC5 commercial hardening', () => {
 
     await openActions()
     await page.getByTestId('duplicate-project').click()
-    await expect(page.getByRole('dialog')).toContainText('setup only')
+    await expect(page.getByRole('dialog')).toContainText('just the setup')
     await expect(page.getByTestId('duplicate-story-content')).toBeVisible()
     await page.getByRole('button', { name: 'Cancel' }).click()
   })
@@ -207,7 +207,7 @@ test.describe('post-RC5 commercial hardening', () => {
     for (const destination of ['/projects', `/project/${project.id}?section=dashboard`]) {
       await page.goto(destination)
       if (destination === '/projects') {
-        await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
+        await expect(page.getByRole('heading', { name: 'Your novels' })).toBeVisible()
       } else {
         await expect(page.getByTestId('primary-project-dashboard')).toBeVisible({ timeout: 60_000 })
       }
