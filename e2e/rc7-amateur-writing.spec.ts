@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { openSection } from './nav'
 
 
 test('RC7: an amateur author turns planning into a protected first draft with useful guidance', async ({ page }, testInfo) => {
@@ -17,7 +18,7 @@ test('RC7: an amateur author turns planning into a protected first draft with us
   await page.getByLabel('Project name').fill(title)
   await page.getByLabel('Genre').fill('Character-driven fantasy mystery')
   await page.getByLabel('Tone').fill('Intimate, tense, and quietly hopeful')
-  await page.getByLabel('Story seed').fill(
+  await page.getByLabel('Your story idea').fill(
     'A village ferryman can hear the final regret of every passenger, but one silent child may expose why the river is taking memories.',
   )
   await page.getByTestId('create-project').click()
@@ -46,7 +47,7 @@ test('RC7: an amateur author turns planning into a protected first draft with us
   }
   await expect(page.getByTestId('start-your-novel-flow')).toContainText('7 of 7 steps handled')
 
-  await page.getByTestId('nav-drafting').click()
+  await openSection(page, 'drafting')
   const drafting = page.getByTestId('drafting-workspace')
   await expect(drafting).toBeVisible({ timeout: 60_000 })
   await expect(page.getByTestId('writing-dashboard')).toContainText('Generate draft')
@@ -65,16 +66,6 @@ test('RC7: an amateur author turns planning into a protected first draft with us
   await expect(draftCard).toContainText('What stays unchanged')
   await draftCard.getByRole('button', { name: 'Review' }).click()
   await expect(draftCard).toContainText('REVIEW', { timeout: 60_000 })
-
-  const companion = page.getByTestId('workspace-companion')
-  await companion.locator('button[aria-expanded]').click()
-  // The Companion may prioritize a higher-severity story/canon issue, but it
-  // must retain an actionable writing message for the newly created draft.
-  await expect(companion).toContainText(
-    /Revise or approve|Review this draft|ready for your review/i,
-    { timeout: 60_000 },
-  )
-  await expect(companion).toContainText(/Choose a focused revision pass|Read the scene/i)
 
   await page.getByTestId('nav-assistant').click()
   await page.getByLabel('Ask the project assistant').fill(

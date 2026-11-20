@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { openSection } from './nav'
 
 
 test('an amateur author can create a project, follow one path, and reach a first scene', async ({ page }) => {
@@ -9,10 +10,10 @@ test('an amateur author can create a project, follow one path, and reach a first
   await page.getByLabel('Project name').fill(title)
   await page.getByLabel('Genre').fill('Fantasy mystery')
   await page.getByLabel('Tone').fill('Hopeful and eerie')
-  await page.getByLabel('Story seed').fill('A mapmaker discovers a road that remembers everyone who vanished on it.')
+  await page.getByLabel('Your story idea').fill('A mapmaker discovers a road that remembers everyone who vanished on it.')
   await page.getByTestId('create-project').click()
 
-  await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible({ timeout: 45_000 })
+  await expect(page.getByTestId('primary-project-dashboard')).toBeVisible({ timeout: 45_000 })
   const start = page.getByTestId('start-your-novel')
   await expect(start).toBeVisible({ timeout: 45_000 })
   await expect(start).toContainText(/setup/i)
@@ -39,19 +40,18 @@ test('an amateur author can create a project, follow one path, and reach a first
   await expect(page.getByTestId('start-your-novel-flow')).toContainText('7 of 7 steps handled')
   await expect(page.getByTestId('start-your-novel-flow')).toContainText('100%')
 
-  await page.getByTestId('section-characters').click()
+  await openSection(page, 'characters')
   await expect(page.getByTestId('characters-panel')).toContainText('Mara Vale')
-  await page.getByTestId('section-power').click()
+  await openSection(page, 'power')
   const emptyPower = page.getByTestId('empty-state-power')
   await expect(emptyPower).toContainText('Create manually')
   await expect(emptyPower).toContainText('Generate with AI')
   await expect(emptyPower).toContainText('Import existing')
   await expect(emptyPower).toContainText('Continue guided setup')
 
-  const companion = page.getByTestId('workspace-companion')
-  await companion.locator('button').last().click()
-  await expect(companion).toContainText('Workspace Companion')
-  await expect(companion).toContainText(/Why this is next|all caught up/i)
+  await page.getByTestId('nav-overview').click()
+  await expect(page.getByTestId('next-step-card')).toBeVisible()
+  await expect(page.getByTestId('book-progress')).toBeVisible()
 })
 
 

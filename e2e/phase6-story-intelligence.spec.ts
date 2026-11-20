@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 import path from 'path'
 
@@ -67,10 +68,9 @@ test.describe('Phase 6 unified Story Intelligence platform', () => {
     const desktopBootstrapResponse = page.waitForResponse(
       (response) => response.url().endsWith(`/api/projects/${projectId}/workspace-bootstrap`) && response.ok(),
     )
-    await page.goto(`/project/${projectId}`)
+    await page.goto(`/project/${projectId}?section=story-health`)
     expect((await (await desktopBootstrapResponse).json()).story_health.story_health_score).toBe(100)
-    await expect(page.getByText('Narrative Intelligence Platform')).toBeVisible()
-    await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible()
+    await expect(page.getByTestId('story-health-panel')).toBeVisible()
     await expect(page.getByTestId('narrative-intelligence-platform')).toBeVisible()
     await expect(page.getByTestId('story-health-score')).toHaveText('100', { timeout: 15000 })
     await expect(page.getByTestId('analysis-cache-stats')).toHaveCount(0)
@@ -81,22 +81,22 @@ test.describe('Phase 6 unified Story Intelligence platform', () => {
     await page.getByRole('tab', { name: 'Timeline' }).click()
     await expect(page.getByTestId('narrative-findings')).toContainText('No active findings')
 
-    await page.getByTestId('section-canon').click()
+    await openSection(page, 'canon')
     await expect(page.getByTestId('canon-panel')).toBeVisible()
-    await page.getByTestId('section-timeline').click()
+    await openSection(page, 'timeline')
     await expect(page.getByTestId('story-timeline-panel')).toBeVisible()
-    await page.getByTestId('section-characters').click()
+    await openSection(page, 'characters')
     await expect(page.getByTestId('characters-panel')).toBeVisible()
-    await page.getByTestId('section-threads').click()
+    await openSection(page, 'threads')
     await expect(page.getByTestId('threads-panel')).toBeVisible()
 
     await page.setViewportSize({ width: 390, height: 844 })
     const mobileBootstrapResponse = page.waitForResponse(
       (response) => response.url().endsWith(`/api/projects/${projectId}/workspace-bootstrap`) && response.ok(),
     )
-    await page.goto(`/project/${projectId}`)
+    await page.goto(`/project/${projectId}?section=story-health`)
     expect((await (await mobileBootstrapResponse).json()).story_health.story_health_score).toBe(100)
-    await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible()
+    await expect(page.getByTestId('story-health-panel')).toBeVisible()
     await expect(page.getByTestId('story-health-score')).toHaveText('100', { timeout: 15000 })
     await expect(page.getByTestId('health-character')).toContainText('100')
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy()

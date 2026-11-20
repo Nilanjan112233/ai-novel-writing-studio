@@ -7,6 +7,7 @@
  */
 
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 function apiBaseUrl(): string {
@@ -306,7 +307,7 @@ test.describe('Paragraph Editor - Writing Assistant (AI Tools)', () => {
   test('Writers can request, review, inspect, and accept multiple concurrent AI suggestions', async ({ page }) => {
     // Navigate to workspace
     await page.goto(`/project/${projectId}`)
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
 
     // Open Paragraph Planning Board
     const planBtn = page.getByTestId(`plan-paragraphs-btn-${sceneId}`)

@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -327,14 +328,14 @@ test.describe('Phase 1B story readiness foundation', () => {
     expect(memory.recent.length).toBeLessThanOrEqual(12)
 
     await page.goto(`/project/${projectId}`)
-    await page.getByTestId('section-readiness').click()
+    await openSection(page, 'readiness')
     await expect(page.getByTestId('readiness-dashboard')).toContainText('READY')
-    await page.getByTestId('section-arcs').click()
+    await openSection(page, 'arcs')
     await expect(page.getByTestId('arc-board')).toContainText('Draftable')
-    await page.getByTestId('section-knowledge').click()
+    await openSection(page, 'knowledge')
     await expect(page.getByTestId('knowledge-view')).toContainText('Reader Knowledge')
     await expect(page.getByTestId('knowledge-view')).toContainText('Elara')
-    await page.getByTestId('section-timeline').click()
+    await openSection(page, 'timeline')
     await expect(page.getByTestId('timeline-v2')).toContainText('Unknown Arc 2 reversal')
     await expect(page.getByTestId('timeline-v2')).toContainText('Details intentionally unresolved')
     await page.screenshot({

@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -412,7 +413,7 @@ test.describe('Phase 2B controlled drafting', () => {
     expect(maxAdmissionsInWindow).toBeLessThanOrEqual(5)
 
     await page.goto(`/project/${projectId}`)
-    await page.getByTestId('section-drafting').click()
+    await openSection(page, 'drafting')
     await expect(page.getByTestId('drafting-workspace')).toContainText('Drafting gates satisfied')
     await expect(page.getByTestId('drafting-workspace')).toContainText('Chapter 1 Scene 1')
     await expect(page.getByTestId('drafting-workspace')).toContainText('Emberfall Chapter 3')

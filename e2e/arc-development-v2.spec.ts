@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -466,11 +467,11 @@ test.describe('Phase 2A arc-centric story development', () => {
     )).toBeTruthy()
 
     await page.goto(`/project/${projectId}`)
-    await page.getByTestId('section-arc-development').click()
+    await openSection(page, 'arc-development')
     await expect(page.getByTestId('arc-development-workspace')).toContainText('DRAFTABLE')
     await expect(page.getByTestId('arc-development-workspace')).toContainText('The Blank Road')
     await expect(page.getByTestId('arc-development-workspace')).toContainText('planning scene')
-    await page.getByTestId('section-story-room').click()
+    await openSection(page, 'story-room')
     await expect(page.getByTestId('story-room')).toContainText('Arc 1: The Aether Crown')
     await page.screenshot({
       path: testInfo.outputPath('last-kingdom-of-aether-story-room.png'),

@@ -120,24 +120,14 @@ test.describe('post-RC5 commercial hardening', () => {
 
     await page.keyboard.press('Control+k')
     await expect(page.getByTestId('workspace-command-search')).toBeVisible()
-    await page.getByTestId('workspace-command-search').fill('Story Timeline')
-    await page.getByRole('button', { name: /Story Timeline/ }).click()
+    await page.getByTestId('workspace-command-search').fill('Timeline')
+    await page.getByRole('dialog').getByRole('button', { name: /^Timeline/ }).click()
     await expect(page).toHaveURL(/section=timeline/)
     await expect(page.getByTestId('story-timeline-panel')).toBeVisible()
     await page.goBack()
     await expect(page.getByTestId('canon-queue-panel')).toBeVisible()
 
-    const companion = page.getByTestId('workspace-companion')
-    const readAcknowledgement = page.waitForResponse(
-      (response) => response.url().endsWith(`/api/projects/${project.id}/workspace-companion/read`)
-        && response.request().method() === 'POST',
-    )
-    await companion.locator('button[aria-expanded]').click()
-    await expect(companion).toHaveAttribute('data-dock', 'right')
-    await companion.getByLabel('Dock companion on the left').click()
-    await expect(companion).toHaveAttribute('data-dock', 'left')
     await assertNoOverflow(page)
-    expect((await readAcknowledgement).ok()).toBeTruthy()
 
     await page.getByTestId('nav-assistant').click()
     await page.getByLabel('Ask the project assistant').fill('How do I publish?')
@@ -219,7 +209,7 @@ test.describe('post-RC5 commercial hardening', () => {
       if (destination === '/projects') {
         await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
       } else {
-        await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible({ timeout: 60_000 })
+        await expect(page.getByTestId('primary-project-dashboard')).toBeVisible({ timeout: 60_000 })
       }
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

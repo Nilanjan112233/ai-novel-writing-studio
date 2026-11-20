@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -57,36 +58,34 @@ test.describe('RC5 product intelligence and author experience', () => {
 
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto(`/project/${projectId}`)
-    await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible({ timeout: 45_000 })
-    await expect(page.getByTestId('page-guidance')).toContainText('Dashboard')
-    await page.getByLabel('Show page guidance').click()
-    await expect(page.getByTestId('page-guidance-detail')).toContainText('Why it matters')
-    await expect(page.getByTestId('page-guidance-detail')).toContainText('What to do here')
-    await expect(page.getByTestId('page-guidance-detail')).toContainText('What happens next')
+    await expect(page.getByTestId('primary-project-dashboard')).toBeVisible({ timeout: 45_000 })
+    await expect(page.getByTestId('book-progress')).toBeVisible()
+    await expect(page.getByTestId('next-step-card')).toBeVisible()
+    await expect(page.getByTestId('next-step-action')).toBeEnabled()
 
-    await page.getByTestId('nav-drafting').click()
+    await openSection(page, 'drafting')
     await expect(page.getByTestId('drafting-panel')).toBeVisible()
     await expect(page.getByText('Mara must escape the citadel before dawn.')).toHaveCount(0)
     await expect(page.getByText('The Gate', { exact: true })).toHaveCount(0)
 
-    await page.getByTestId('section-canon').click()
+    await openSection(page, 'canon')
     await expect(page.getByTestId('canon-dashboard')).toBeVisible()
     await page.getByTestId('canon-dashboard').getByRole('button', { name: 'Review Canon Queue' }).click()
     await expect(page.getByTestId('canon-queue-panel')).toBeVisible()
-    await expect(page.getByTestId('page-guidance')).toContainText('Canon Queue')
+    await expect(page.getByRole('heading', { level: 1, name: 'Proposed changes' })).toBeVisible()
 
-    await page.getByTestId('section-workflow').click()
+    await openSection(page, 'workflow')
     await expect(page.getByTestId('workflow-developer-details')).toHaveCount(0)
     await expect(page.getByText('Story-team calls')).toHaveCount(0)
     await page.getByTestId('workflow-panel').getByRole('button', { name: 'Developer Mode' }).click()
     await expect(page.getByTestId('workflow-developer-details')).toBeVisible()
-    await page.getByTestId('section-settings').click()
+    await openSection(page, 'settings')
     await expect(page.getByTestId('workspace-settings-panel')).not.toContainText('Cognition Events')
     await expect(page.getByTestId('workspace-settings-panel')).not.toContainText('Calls:')
 
-    await page.getByTestId('section-project-timeline').click()
+    await openSection(page, 'project-timeline')
     await expect(page.getByTestId('project-timeline')).toContainText('how the NovelForge project changed')
-    await page.getByTestId('section-explainability-timeline').click()
+    await openSection(page, 'explainability-timeline')
     await expect(page.getByTestId('explainability-timeline')).toContainText('what changed, why the score moved, and where to act')
 
     await page.getByTestId('nav-assistant').click()
@@ -100,25 +99,14 @@ test.describe('RC5 product intelligence and author experience', () => {
     await answer.getByTestId('assistant-navigation-action').first().click()
     await expect(page.getByTestId('arcs-panel')).toBeVisible()
 
-    const companion = page.getByTestId('workspace-companion')
-    await expect(companion).toBeVisible()
-    await companion.locator('button[aria-expanded]').click()
-    await expect(companion).toContainText('Workspace Companion')
-    await expect(companion).toContainText('Ask how this page works')
-    const avatar = companion.locator('[data-companion-state]').first()
-    await expect(avatar).toBeVisible()
-    expect(await avatar.evaluate((element) => getComputedStyle(element).animationName)).not.toBe('none')
-    await page.emulateMedia({ reducedMotion: 'reduce' })
-    expect(await avatar.evaluate((element) => getComputedStyle(element).animationName)).toBe('none')
-    await page.emulateMedia({ reducedMotion: 'no-preference' })
-    await page.screenshot({ path: 'artifacts/rc5-workspace-companion-desktop.png', fullPage: true })
+    await expect(page.getByTestId('workspace-companion')).toHaveCount(0)
+    await page.screenshot({ path: 'artifacts/rc5-workspace-desktop.png', fullPage: true })
 
     const feed = await (await request.get(`${apiBase}/api/projects/${projectId}/workspace-companion`)).json()
     const messageIds = (feed.messages || []).map((message: { message_id: string }) => message.message_id)
     expect(new Set(messageIds).size).toBe(messageIds.length)
 
-    await page.getByTestId('nav-toolbox').click()
-    await page.getByTestId('section-knowledge-graph').click()
+    await openSection(page, 'knowledge-graph')
     await expect(page.getByTestId('knowledge-graph-panel')).toBeVisible()
     await expect(page.getByTestId('knowledge-graph-panel')).not.toContainText('node_id')
     await expect(page.getByTestId('knowledge-graph-panel')).not.toContainText('raw_payload')
@@ -138,10 +126,10 @@ test.describe('RC5 product intelligence and author experience', () => {
 
   test('developer details stay opt-in on settings', async ({ page }) => {
     await page.goto('/settings')
-    await expect(page.getByRole('heading', { name: 'AI Connections & Settings' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'AI settings' })).toBeVisible()
     await expect(page.getByTestId('execution-settings')).toHaveCount(0)
     await expect(page.getByTestId('agent-assignment-table')).toHaveCount(0)
-    await page.getByRole('button', { name: 'Developer Mode' }).click()
+    await page.getByRole('button', { name: 'Advanced' }).click()
     await expect(page.getByTestId('execution-settings')).toBeVisible()
     await expect(page.getByTestId('agent-assignment-table')).toBeVisible()
   })

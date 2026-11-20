@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import fs from 'fs'
 
 
@@ -396,8 +397,8 @@ test.describe('Phase 3A editorial intelligence', () => {
     expect(maxAdmissionsInWindow).toBeLessThanOrEqual(5)
 
     await page.goto(`/project/${projectId}`)
-    await page.getByTestId('section-editorial').click()
-    await expect(page.getByTestId('editorial-workspace')).toContainText('Approved drafts remain authoritative')
+    await openSection(page, 'editorial')
+    await expect(page.getByTestId('editorial-workspace')).toContainText('Your chapters are never changed without you')
     await expect(page.getByTestId('editorial-workspace')).toContainText('Clarify Sera voice')
     await expect(page.getByTestId('editorial-workspace')).toContainText('arc editorial')
     await page.screenshot({

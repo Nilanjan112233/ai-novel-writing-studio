@@ -1,4 +1,5 @@
 import { APIRequestContext, expect, test } from '@playwright/test'
+import { openSection } from './nav'
 import { MongoClient } from 'mongodb'
 import fs from 'fs'
 import path from 'path'
@@ -67,9 +68,9 @@ test.describe('Phase 3C story intelligence and author experience', () => {
 
     await page.setViewportSize({ width: 1440, height: 1000 })
     await page.goto(`/project/${projectId}`)
-    await expect(page.getByText('Narrative Intelligence Platform')).toBeVisible()
+    await expect(page.getByTestId('book-progress')).toBeVisible()
     await expect(
-      page.getByTestId('primary-story-health-dashboard').getByRole('heading', {
+      page.getByTestId('primary-project-dashboard').getByRole('heading', {
         name: 'Phase 3C Validation: The Bell Beneath Winter',
         exact: true,
       }),
@@ -86,7 +87,7 @@ test.describe('Phase 3C story intelligence and author experience', () => {
       ['canon', 'canon-panel', 'phase-3c-canon-dashboard.png'],
     ]
     for (const [section, panel, filename] of captures) {
-      await page.getByTestId(`section-${section}`).click()
+      await openSection(page, section)
       await expect(page.getByTestId(panel)).toBeVisible()
       if (section === 'story-health') {
         await expect(page.getByTestId('story-health-score')).not.toHaveText('--')
@@ -102,7 +103,7 @@ test.describe('Phase 3C story intelligence and author experience', () => {
       })
     }
 
-    await page.getByTestId('section-story-health').click()
+    await openSection(page, 'story-health')
     await expect(page.getByTestId('story-health-score')).not.toHaveText('--')
     await page.getByLabel('Change target').fill('Mara Venn')
     await page.getByTestId('preview-change-impact').click()
@@ -118,7 +119,7 @@ test.describe('Phase 3C story intelligence and author experience', () => {
     await page.goto(`/project/${projectId}`)
     // Story Health is the default surface and the toolbox is intentionally
     // collapsed on mobile, so no hidden navigation control should be clicked.
-    await expect(page.getByTestId('primary-story-health-dashboard')).toBeVisible()
+    await expect(page.getByTestId('primary-project-dashboard')).toBeVisible()
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     )
