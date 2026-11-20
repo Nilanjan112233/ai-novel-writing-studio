@@ -1032,7 +1032,7 @@ export default function ProjectWorkspacePage() {
             <div className="grid gap-3 md:grid-cols-3">
               <div className="rounded-lg border p-4"><h3 className="font-semibold">AI connections</h3><p className="mt-2 text-sm text-muted-foreground">Connect and verify the AI service NovelForge uses for project work.</p></div>
               <div className="rounded-lg border p-4"><h3 className="font-semibold">Protected credentials</h3><p className="mt-2 text-sm text-muted-foreground">Stored credentials remain masked and are never returned to this workspace.</p></div>
-              <div className="rounded-lg border p-4"><h3 className="font-semibold">Advanced controls</h3><p className="mt-2 text-sm text-muted-foreground">Provider routing and diagnostics stay inside the Settings page’s Developer Mode.</p></div>
+              <div className="rounded-lg border p-4"><h3 className="font-semibold">Advanced controls</h3><p className="mt-2 text-sm text-muted-foreground">Provider routing and diagnostics are under Advanced on the AI settings page.</p></div>
             </div>
             <Button asChild className="mt-4"><a href="/settings"><Settings className="mr-2 h-4 w-4" />Open AI Connections & Settings</a></Button>
             <ProjectBackupPanel projectId={projectId} />

@@ -54,6 +54,8 @@ test('author can back up, modify, restore a verified copy, and keep the original
 test('first-run operations explain privacy, diagnostics, and categorized feedback', async ({ page }) => {
   test.setTimeout(120_000)
   await page.goto('/settings')
+  // Privacy, diagnostics and feedback live under Advanced in the redesigned settings page.
+  await page.getByRole('button', { name: 'Advanced' }).click()
   const readiness = page.getByTestId('operational-readiness')
   await expect(readiness).toBeVisible({ timeout: 60_000 })
   await expect(readiness).toContainText('AI outages never hide existing projects')

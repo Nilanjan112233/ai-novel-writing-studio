@@ -38,7 +38,7 @@ export default function BookOverview({
   onStep: (step: StepId) => void
   onDevelop: () => void
   guidance?: ReactNode
-  /** Step-by-step setup, shown while the plan is still empty. */
+  /** Step-by-step setup, shown until the first chapter is written. */
   setup?: ReactNode
 }) {
   const running = currentRun?.status === 'running' || currentRun?.status === 'queued'
@@ -156,7 +156,10 @@ export default function BookOverview({
         </Card>
       </div>
 
-      {progress.stage === 'plan' && setup ? setup : null}
+      {/* Keep the guided setup mounted until the first chapter exists: saving its
+          first character already counts as "planned", and unmounting it mid-save
+          would lose the author's place in the seven steps. */}
+      {progress.chaptersWritten === 0 && setup ? setup : null}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat icon={<BookOpen className="h-4 w-4" />} label="Chapters" value={String(progress.chaptersWritten)} />
