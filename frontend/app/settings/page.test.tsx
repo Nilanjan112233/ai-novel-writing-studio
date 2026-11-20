@@ -121,7 +121,7 @@ describe('Settings orchestration page', () => {
   it('renders execution settings and per-agent assignment table', () => {
     render(<SettingsPage />)
     expect(screen.queryByTestId('execution-settings')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Developer Mode' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Advanced' }))
     expect(screen.getByTestId('execution-settings')).toBeInTheDocument()
     expect(screen.getByTestId('agent-assignment-table')).toBeInTheDocument()
     expect(screen.getByTestId('provider-card-gemini')).toBeInTheDocument()
@@ -130,7 +130,7 @@ describe('Settings orchestration page', () => {
 
   it('tests a configured model through real inference endpoint contract', async () => {
     render(<SettingsPage />)
-    fireEvent.click(screen.getAllByRole('button', { name: 'Test Selected Model' })[0])
+    fireEvent.click(screen.getAllByRole('button', { name: 'Test' })[0])
     await waitFor(() => {
       expect(baseStore.testModel).toHaveBeenCalledWith('gemini', 'gemini-flash')
     })
@@ -141,14 +141,14 @@ describe('Settings orchestration page', () => {
     const geminiSelect = screen.getByTestId('model-select-gemini')
     expect(geminiSelect).toHaveTextContent('Gemini 2.5 Flash')
     expect(screen.getByTestId('discovered-count-gemini')).toHaveTextContent('1')
-    expect(screen.getAllByRole('button', { name: 'Discover Models' }).length).toBeGreaterThan(0)
-    expect(screen.getAllByRole('button', { name: 'Verify Working Models' }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: 'Find models' }).length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: 'Verify models' }).length).toBeGreaterThan(0)
   })
 
   it('shows configured state without rendering a stored credential', () => {
     render(<SettingsPage />)
     expect(screen.getByText('Credential configured. The stored value is never returned.')).toBeInTheDocument()
-    const geminiKey = screen.getByPlaceholderText('Configured - enter a new key to replace')
+    const geminiKey = screen.getByPlaceholderText('Key saved. Paste a new one to replace it')
     expect(geminiKey).toHaveValue('')
   })
 })

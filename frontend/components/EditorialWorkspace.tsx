@@ -178,19 +178,18 @@ export default function EditorialWorkspace({
     <div className="space-y-5" data-testid="editorial-workspace">
       {focusDraftId ? <div className="rounded-md border border-sky-200 bg-sky-50 p-3 text-sm"><strong>Editing a selected chapter.</strong> Your original chapter stays safe. Ask for improvements, review the changes, and choose which version to use.</div> : null}
       <div className="rounded-md border bg-muted/30 p-3 text-sm">
-        <strong>Approved drafts remain authoritative.</strong>{' '}
-        Your source draft is always protected.{' '}
-        Review and revision create alternatives. A proposal enters Drafting as a new review version only after you approve and apply it.
+        <strong>Your chapters are never changed without you.</strong>{' '}
+        The AI writes a suggested version. Compare it with the original, then apply it or throw it away.
       </div>
 
       <section>
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h3 className="font-semibold">Editorial Scores</h3>
-          <span className="text-xs text-muted-foreground">{latestScores.length} current scores</span>
+          <h3 className="font-semibold">Quality scores</h3>
+          <span className="text-xs text-muted-foreground">{latestScores.length} scored</span>
         </div>
         <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
           {latestScores.slice(0, detailLimit).map((score) => <ScoreCard key={score.score_id} score={score} identity={subjectIdentity(score.subject_id, score.subject_type)} />)}
-          {!latestScores.length ? <p className="text-sm text-muted-foreground">No editorial scores yet.</p> : null}
+          {!latestScores.length ? <p className="text-sm text-muted-foreground">No scores yet. Ask for suggestions on a chapter to get one.</p> : null}
         </div>
       </section>
 
@@ -263,7 +262,7 @@ export default function EditorialWorkspace({
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="font-semibold">{report.report_type} · {subjectIdentity(report.subject_id, report.subject_type)}</p>
-                  <p className="text-xs text-muted-foreground">AI editorial review</p>
+                  <p className="text-xs text-muted-foreground">AI review</p>
                 </div>
                 <span className={`rounded px-2 py-1 font-bold ${scoreTone(report.score)}`}>{report.score}</span>
               </div>
@@ -366,7 +365,7 @@ export default function EditorialWorkspace({
         })}
         {!branches.length ? <p className="text-sm text-muted-foreground">No suggested versions yet. Create one from an approved chapter above.</p> : null}
       </section>
-      {(latestScores.length > detailLimit || reports.length > detailLimit || branches.length > detailLimit) ? <Button variant="outline" onClick={() => setDetailLimit((value) => value + 30)}>Load 30 more editorial records</Button> : null}
+      {(latestScores.length > detailLimit || reports.length > detailLimit || branches.length > detailLimit) ? <Button variant="outline" onClick={() => setDetailLimit((value) => value + 30)}>Show 30 more</Button> : null}
     </div>
   )
 }

@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
+import AppHeader from '@/components/AppHeader'
+import { LoadingState, StatusBadge } from '@/components/ui/page'
 import { useSettingsStore } from '@/store/settingsStore'
 import { settingsApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -187,34 +188,42 @@ export default function SettingsPage() {
   }
 
   if (!localSettings || !localExecution) {
-    return <div className="p-8">Loading settings...</div>
+    return <div className="min-h-screen bg-background"><AppHeader /><LoadingState className="mt-16">Loading AI settings…</LoadingState></div>
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <nav className="flex items-center gap-4 text-sm text-muted-foreground" aria-label="Settings navigation">
-          <Link href="/" className="hover:text-foreground">NovelForge</Link>
-          <span aria-hidden="true">/</span>
-          <Link href="/projects" className="hover:text-foreground">Projects</Link>
-          <span aria-hidden="true">/</span>
-          <span className="text-foreground">Settings</span>
-        </nav>
-        <OperationalReadinessPanel />
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <AppHeader />
+      <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold">AI Connections & Settings</h1>
-            <p className="text-sm text-muted-foreground">Connect an AI provider, verify a model, and choose the default service NovelForge should use.</p>
+            <h1 className="text-2xl font-semibold tracking-tight">AI settings</h1>
+            <p className="mt-1 max-w-2xl text-[15px] text-muted-foreground">Connect at least one AI service so the app can plan and write with you. Paste a key, find the models it offers, pick one and test it.</p>
           </div>
-          <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => setDeveloperMode((value) => !value)} aria-pressed={developerMode}><Code2 className="mr-2 h-4 w-4" />Developer Mode</Button><Button onClick={saveAll} disabled={loading} className="gap-2">
+          <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => setDeveloperMode((value) => !value)} aria-pressed={developerMode}><Code2 className="mr-2 h-4 w-4" />Advanced</Button><Button onClick={saveAll} disabled={loading} className="gap-2">
             <SlidersHorizontal className="h-4 w-4" />
-            {loading ? 'Saving...' : 'Save Settings'}
+            {loading ? 'Saving…' : 'Save settings'}
           </Button></div>
         </div>
 
+        <ol className="grid gap-3 sm:grid-cols-3" aria-label="How to connect an AI service">
+          {[
+            ['Paste a key', 'Get a key from the provider (Google AI Studio has a free one) and paste it into its card.'],
+            ['Find models', 'Click Find models to list what the key can use, then Verify models to check which ones answer.'],
+            ['Pick and test', 'Choose a model, click Test, then Save settings.'],
+          ].map(([title, text], index) => (
+            <li key={title} className="flex gap-3 rounded-xl border bg-card p-4 shadow-soft">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{index + 1}</span>
+              <span><span className="block text-sm font-medium">{title}</span><span className="mt-0.5 block text-sm text-muted-foreground">{text}</span></span>
+            </li>
+          ))}
+        </ol>
+
+        {developerMode ? <OperationalReadinessPanel /> : null}
+
         {developerMode ? (
-        <section className="rounded-lg border bg-card p-5 space-y-4" data-testid="execution-settings">
-          <div><h2 className="text-xl font-semibold">Advanced execution</h2><p className="text-sm text-muted-foreground">Developer controls for routing, context limits, and project-run budgets.</p></div>
+        <section className="rounded-xl border bg-card p-5 space-y-4 shadow-soft" data-testid="execution-settings">
+          <div><h2 className="text-lg font-semibold">Advanced: how the AI runs</h2><p className="text-sm text-muted-foreground">Routing, fallbacks, context size and cost limits. The defaults work for most writers.</p></div>
           <div className="grid gap-4 md:grid-cols-4">
             <div>
               <Label htmlFor="execution-mode">Execution Mode</Label>
@@ -224,8 +233,8 @@ export default function SettingsPage() {
                 value={localExecution.execution_mode}
                 onChange={(event) => setLocalExecution({ ...localExecution, execution_mode: event.target.value })}
               >
-                <option value="hybrid">Hybrid</option>
-                <option value="full">Full AI</option>
+                <option value="hybrid">Hybrid (falls back to other services)</option>
+                <option value="full">Single service</option>
               </select>
             </div>
             <div>
@@ -290,7 +299,7 @@ export default function SettingsPage() {
         ) : null}
 
         {developerMode && memorySettings ? (
-          <section className="rounded-lg border bg-card p-5 space-y-4" data-testid="memory-provider-settings">
+          <section className="rounded-xl border bg-card p-5 space-y-4 shadow-soft" data-testid="memory-provider-settings">
             <div>
               <h2 className="text-xl font-semibold">Experimental memory providers</h2>
               <p className="text-sm text-muted-foreground">Native NovelForge memory remains the default and authoritative path. TencentDB Agent Memory is optional retrieval telemetry only; it can never change canon, decisions, approved prose, or Story Bible state.</p>
@@ -323,8 +332,8 @@ export default function SettingsPage() {
           </section>
         ) : null}
 
-        <section id="ai-provider" className="rounded-lg border bg-card p-5 space-y-4">
-          <div><h2 className="text-xl font-semibold">AI providers</h2><p className="text-sm text-muted-foreground">Add a credential, discover the available models, verify them, then choose one as the default. Stored credentials are never shown again.</p></div>
+        <section id="ai-provider" className="space-y-4">
+          <div><h2 className="text-lg font-semibold">AI services</h2><p className="text-sm text-muted-foreground">Keys are encrypted on this computer and never shown again after saving.</p></div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {providerRows.map((rawProvider) => {
               const provider = rawProvider === 'local' ? 'ollama' : rawProvider === 'claude' ? 'anthropic' : rawProvider
@@ -339,25 +348,23 @@ export default function SettingsPage() {
               const selectedHealth = validationFor(provider, selectedModel)
               const providerStatus = healthFor(provider)
               return (
-                <div key={provider} className="flex h-full min-w-0 flex-col rounded-md border p-4 space-y-3" data-testid={`provider-card-${provider}`}>
+                <div key={provider} className="flex h-full min-w-0 flex-col space-y-3 rounded-xl border bg-card p-5 shadow-soft" data-testid={`provider-card-${provider}`}>
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="truncate font-medium">{PROVIDER_LABELS[provider] || provider}</h3>
-                    <span className={`text-xs uppercase ${providerStatus?.status === 'online' ? 'text-green-600' : providerStatus?.status === 'offline' ? 'text-red-600' : 'text-amber-600'}`}>
-                      {providerStatus?.status || 'untested'}
-                    </span>
+                    <h3 className="truncate font-semibold">{PROVIDER_LABELS[provider] || provider}</h3>
+                    <StatusBadge tone={providerStatus?.status === 'online' ? 'success' : providerStatus?.status === 'offline' ? 'danger' : localSettings.providers?.[provider]?.configured ? 'info' : 'neutral'}>
+                      {providerStatus?.status === 'online' ? 'Working' : providerStatus?.status === 'offline' ? 'Not reachable' : localSettings.providers?.[provider]?.configured ? 'Key saved' : 'Not set up'}
+                    </StatusBadge>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 rounded-md bg-muted/40 p-3 text-xs">
-                    <span>Provider Status</span><strong className="text-right uppercase">{providerStatus?.status || 'untested'}</strong>
-                    <span>Discovered Models</span><strong className="text-right" data-testid={`discovered-count-${provider}`}>{providerModels.length}</strong>
-                    <span>Working Models</span><strong className="text-right" data-testid={`working-count-${provider}`}>{workingValidations.length}</strong>
-                    <span>Selected Model</span><strong className="truncate text-right">{selectedModel || 'None'}</strong>
-                    <span>Latency</span><strong className="text-right">{selectedHealth?.latency_ms ?? selectedHealth?.latency ?? providerStatus?.last_latency_ms ?? 'n/a'}{(selectedHealth?.latency_ms ?? selectedHealth?.latency ?? providerStatus?.last_latency_ms) ? 'ms' : ''}</strong>
-                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    <span data-testid={`discovered-count-${provider}`}>{providerModels.length}</span> models found · <span data-testid={`working-count-${provider}`}>{workingValidations.length}</span> verified
+                    {selectedModel ? <> · using <span className="font-medium text-foreground">{selectedModel}</span></> : null}
+                    {(selectedHealth?.latency_ms ?? selectedHealth?.latency ?? providerStatus?.last_latency_ms) ? ` · ${selectedHealth?.latency_ms ?? selectedHealth?.latency ?? providerStatus?.last_latency_ms} ms` : ''}
+                  </p>
                   <Input
                     type="password"
                     value={localSettings.providers?.[provider]?.api_key || ''}
                     onChange={(event) => handleProviderChange(provider, 'api_key', event.target.value)}
-                    placeholder={localSettings.providers?.[provider]?.configured ? 'Configured - enter a new key to replace' : 'API key'}
+                    placeholder={localSettings.providers?.[provider]?.configured ? 'Key saved. Paste a new one to replace it' : 'Paste API key'}
                   />
                   {localSettings.providers?.[provider]?.configured ? (
                     <p className="text-xs text-muted-foreground">Credential configured. The stored value is never returned.</p>
@@ -368,7 +375,7 @@ export default function SettingsPage() {
                     onChange={(event) => handleProviderChange(provider, 'model', event.target.value)}
                     data-testid={`model-select-${provider}`}
                   >
-                    <option value="">Select model</option>
+                    <option value="">Choose a model</option>
                     {localSettings.providers?.[provider]?.model && !providerModels.some((model) => model.model_id === localSettings.providers?.[provider]?.model) && (
                       <option value={localSettings.providers[provider].model} disabled>
                         Not discovered: {localSettings.providers[provider].model}
@@ -386,19 +393,19 @@ export default function SettingsPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Button size="sm" variant="outline" className="min-w-0" onClick={() => runProviderValidation(provider)} disabled={validatingProvider === provider}>
                       {validatingProvider === provider ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                      Validate Key
+                      Check key
                     </Button>
                     <Button size="sm" variant="outline" className="min-w-0 gap-2" onClick={() => runDiscovery(provider)} disabled={discoveringProvider === provider}>
                       {discoveringProvider === provider ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                      Discover Models
+                      Find models
                     </Button>
                     <Button size="sm" variant="outline" className="min-w-0 gap-2" onClick={() => runValidation(provider)} disabled={validatingProvider === provider || providerModels.length === 0}>
                       {validatingProvider === provider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                      Verify Working Models
+                      Verify models
                     </Button>
                     <Button size="sm" className="min-w-0 gap-2" onClick={() => runModelTest(provider, selectedModel)} disabled={!selectedModel || testingKey === `${provider}:${selectedModel}`}>
                       {testingKey === `${provider}:${selectedModel}` ? <Loader2 className="h-4 w-4 animate-spin" /> : <TestTube2 className="h-4 w-4" />}
-                      Test Selected Model
+                      Test
                     </Button>
                   </div>
                   {providerValidation && (

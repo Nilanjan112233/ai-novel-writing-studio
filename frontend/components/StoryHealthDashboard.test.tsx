@@ -122,7 +122,7 @@ test('renders health, audit findings, memory, and change impact controls', () =>
   expect(screen.getByText('The bell promise remains open.')).toBeInTheDocument()
   expect(screen.getByText('Chapter 50')).toBeInTheDocument()
   expect(screen.getByTestId('narrative-intelligence-platform')).toBeInTheDocument()
-  expect(screen.getByText(/Scores update after approved story changes/)).toBeInTheDocument()
+  expect(screen.getByText(/Scores update when you approve chapters/)).toBeInTheDocument()
   expect(screen.getByText('The brass key promise has no detected resolution.')).toBeInTheDocument()
   expect(screen.getByText('Chapter 4')).toBeInTheDocument()
 
