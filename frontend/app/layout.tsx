@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
 import "./globals.css"
+import { themeBootScript } from "@/lib/theme"
 
 export const metadata: Metadata = {
-  title: "NovelForge - Narrative Intelligence",
-  description: "A local, author-controlled narrative intelligence studio for long-form fiction",
+  title: "NovelForge",
+  description: "Plan, write and finish a novel with an AI writing partner that remembers your story.",
 }
 
 export default function RootLayout({
@@ -12,7 +13,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body className="font-sans">{children}</body>
     </html>
   )
