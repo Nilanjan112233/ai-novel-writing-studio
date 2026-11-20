@@ -8,9 +8,15 @@ characters, places, promises and mysteries into a **Story Bible**, so later AI
 calls get the facts they need instead of the whole book. The author stays in
 control: AI output is a suggestion until the author approves it.
 
-![Writing workspace](docs/screenshots/04-writing.png)
+![Project overview: next step and progress](docs/screenshots/03-overview.png)
 
 ## What it does
+
+Each project follows one guided path, numbered in the sidebar:
+**Overview → Plan → Write → Review → Finish**. A progress bar at the top
+always shows the book's stage, chapters approved against the plan and the word
+count, and the Overview names the single next step. Specialist tools are
+tucked under "More tools". Light and dark themes are included.
 
 - **Plan the story**: story vision, characters, world rules, themes, plot
   threads, mysteries and a timeline. A "Develop Story" button runs a team of
@@ -35,12 +41,13 @@ control: AI output is a suggestion until the author approves it.
 
 | | |
 | --- | --- |
-| ![Home](docs/screenshots/01-home.png) **Home** with first-run readiness checks | ![Projects](docs/screenshots/02-projects.png) **Project library** |
-| ![Dashboard](docs/screenshots/03-dashboard.png) **Project dashboard** with the next best step | ![Chapter](docs/screenshots/05-chapter.png) **Approved chapter** (versioned) |
-| ![Story Studio](docs/screenshots/06-story-studio.png) **Extracted story facts** waiting for author approval | ![Story Health](docs/screenshots/07-story-health.png) **Story Health** consistency dashboard |
-| ![Characters](docs/screenshots/08-characters.png) **Story Bible: characters** | ![AI settings](docs/screenshots/09-ai-settings.png) **AI providers**: add a key, discover and verify models |
+| ![Home](docs/screenshots/01-home.png) **Home** with a first-run check | ![Novels](docs/screenshots/02-projects.png) **Your novels** |
+| ![Plan](docs/screenshots/04-plan.png) **1 · Plan**: story idea, characters, world, plot | ![Write](docs/screenshots/05-write.png) **2 · Write**: chapters, word counts, approval |
+| ![Facts](docs/screenshots/06-facts.png) **3 · Review**: facts the AI found, waiting for you | ![Story check](docs/screenshots/07-story-check.png) **3 · Review**: story consistency check |
+| ![Finish](docs/screenshots/08-finish.png) **4 · Finish**: assemble and export the book | ![AI settings](docs/screenshots/09-ai-settings.png) **AI settings**: paste a key, pick and test a model |
+| ![Dark mode](docs/screenshots/12-dark-mode.png) **Dark mode** | ![Before the redesign](docs/screenshots/before-redesign.png) **Before the redesign** (for comparison) |
 
-Short walkthrough (about 30 seconds):
+Short walkthrough (about 30 seconds) of the guided path:
 
 ![Demo](docs/screenshots/demo.gif)
 
@@ -50,6 +57,8 @@ with the offline mock AI provider.*
 **With a real model** (OpenRouter `deepseek/deepseek-v4-flash` for writing,
 Gemini Flash-Lite for extraction): a chapter written from a one-line
 instruction, and the story facts extracted from it waiting for the author.
+These two were captured before the redesign, so they show the older layout;
+the AI output is the same.
 
 | | |
 | --- | --- |
@@ -85,7 +94,8 @@ flowchart LR
   database.
 
 A plain-language walkthrough of the main flow and the design decisions is in
-**[docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md)**.
+**[docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md)**; the UX audit behind the
+current layout is in [docs/UX_REDESIGN_PLAN.md](docs/UX_REDESIGN_PLAN.md).
 
 ## Run it locally
 
@@ -121,7 +131,7 @@ On macOS/Linux use `python3 -m venv backend/.venv`,
 picks up `backend/.venv` automatically.
 
 **Real AI**: open **AI Settings**, paste a provider key (for example a free
-Google AI Studio key for Gemini), click *Discover Models*, verify one, and save.
+Google AI Studio key for Gemini), click *Find models*, verify one, and save.
 Set `USE_MOCK_LLM=false` in `backend/.env` to hide the mock provider.
 Interactive API docs are at http://localhost:8000/docs.
 
@@ -133,7 +143,7 @@ double-click `scripts\windows\start-novelforge.cmd`. See
 
 ```powershell
 npm run test:backend    # pytest (~220 tests), uses a throwaway MongoDB database
-npm run test:frontend   # Vitest (87 tests)
+npm run test:frontend   # Vitest (92 tests)
 npm run lint            # ESLint, zero warnings allowed
 npm run build           # Next.js production build + type check
 npm run test:e2e        # Playwright (starts the app itself; ports 3000/8000 must be free)
@@ -144,16 +154,15 @@ the Playwright suite against a MongoDB service container.
 
 ### Known issues
 
-- **Playwright suite**: run offline (mock AI), 17 of 52 specs pass, 10 skip and
-  25 fail. About half of the failing specs look for screens and test IDs from
-  before the workspace UI was redesigned (for example
-  `primary-story-health-dashboard`); the other half need a real AI provider,
-  because the mock cannot produce schema-valid scene prose. With a real
-  provider configured (Gemini Flash-Lite), 13 of the 14 AI specs pass. The one
-  that still fails (`orchestration-v2`) completes its AI run and then looks for
-  a pre-redesign sidebar button. Until the stale specs are updated, the e2e
-  step in CI (which has no API key) is expected to fail. Backend (pytest),
-  frontend (Vitest), lint and build all pass.
+- **Playwright suite**: run offline (mock AI), 32 of 52 tests pass, 20 skip
+  and none fail. The skipped tests need a real AI provider: either they call
+  Gemini directly, or they generate scene prose, which the offline mock cannot
+  write in a schema-valid form. They skip themselves when no real provider key
+  is saved (`e2e/realAi.ts`). The real-provider tests were last run (13 of 14
+  passing) before the UI redesign and have not been re-run against it. On
+  Windows, Playwright can leave its dev server running after the last test;
+  free ports 3000/8000 before the next run. Backend (pytest), frontend
+  (Vitest), lint and build all pass.
 - With a single provider selected ("full" execution mode), planning and scene
   agents have no fallback provider, so an outage of that provider (for example
   Gemini HTTP 503) fails the request after two retries. "Hybrid" mode adds
