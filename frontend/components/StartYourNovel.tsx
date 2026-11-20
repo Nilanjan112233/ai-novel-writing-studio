@@ -124,7 +124,7 @@ export default function StartYourNovel({
 
   if (!open) {
     return (
-      <section className="rounded-xl border bg-gradient-to-r from-violet-50 via-background to-sky-50 p-5 shadow-sm" data-testid="start-your-novel-cta">
+      <section className="rounded-xl border border-primary/20 bg-primary/5 p-5 shadow-soft" data-testid="start-your-novel-cta">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-violet-700">Recommended for new authors</p>

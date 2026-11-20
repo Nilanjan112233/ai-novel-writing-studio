@@ -2,37 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import {
-  BookOpen,
-  Brain,
-  CircleHelp,
-  ClipboardCheck,
-  Compass,
-  Clock3,
-  GitBranch,
-  Globe2,
-  Landmark,
-  Lightbulb,
-  Link2,
-  ListTree,
-  Loader2,
-  MessageSquare,
-  Network,
-  PenLine,
-  Play,
-  Send,
-  Settings,
-  Search,
-  Shield,
-  Sparkles,
-  Eye,
-  FileSearch,
-  Activity,
-  Users,
-  X,
-} from 'lucide-react'
+import { CheckCircle2, Loader2, PenLine, Play, Search, Send, Settings, Sparkles, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -50,15 +21,12 @@ import EditorialWorkspace from '@/components/EditorialWorkspace'
 import ManuscriptWorkspace from '@/components/ManuscriptWorkspace'
 import CanonDashboard from '@/components/CanonDashboard'
 import StoryHealthDashboard from '@/components/StoryHealthDashboard'
-import Dashboard from '@/components/Dashboard'
 import InteractiveNarrativeStudio from '@/components/InteractiveNarrativeStudio'
 import WorkspaceIntelligenceBanner from '@/components/WorkspaceIntelligenceBanner'
 import NarrativeProductionPipeline from '@/components/NarrativeProductionPipeline'
 import NarrativeCritiquePanel from '@/components/NarrativeCritiquePanel'
-import WorkspaceCompanion from '@/components/WorkspaceCompanion'
 import StoryStudioPanel from '@/components/StoryStudioPanel'
 import WritingWorkspace from '@/components/WritingWorkspace'
-import PageGuidance from '@/components/PageGuidance'
 import ActionableEmptyState from '@/components/ActionableEmptyState'
 import KnowledgeSuggestionsPanel from '@/components/KnowledgeSuggestionsPanel'
 import DecisionHistoryPanel from '@/components/DecisionHistoryPanel'
@@ -69,6 +37,11 @@ import { ExplainabilityTimelineView, ProjectTimelineView } from '@/components/Pr
 import { dataApi, rc6Api } from '@/lib/api'
 import type { ApplicationKnowledge, WritingState } from '@/types'
 import { useProjectStore, normalizeAgentName } from '@/store/projectStore'
+import { ALL_SECTION_IDS, STEPS, sectionInfo, stepById, stepForSection, type StepId } from '@/lib/workspaceNav'
+import { computeBookProgress, computeNextStep } from '@/lib/bookProgress'
+import { BookProgressBar, NextStepFooter, StepTabs, WorkspaceSidebar } from '@/components/workspace/WorkspaceChrome'
+import BookOverview from '@/components/workspace/BookOverview'
+import { EmptyState, PageHeader } from '@/components/ui/page'
 
 const storyTeamRoleLabels: Record<string, string> = {
   storydevelopmentagent: 'Story development',
@@ -104,69 +77,22 @@ function activityOutcome(output: { content?: string; metadata?: Record<string, u
   return 'Completed the review; no current planning records needed to change.'
 }
 
-const sections = [
-  ['story-studio', 'Story Studio', MessageSquare],
-  ['writing', 'Writing', BookOpen],
-  ['vision', 'Story Vision', BookOpen],
-  ['story-room', 'Story Room', MessageSquare],
-  ['story-health', 'Story Health', Activity],
-  ['guide', 'Creation Guide', Compass],
-  ['discussion', 'Discussion Room', MessageSquare],
-  ['characters', 'Characters', Users],
-  ['world', 'World', Globe2],
-  ['power', 'Power System', Shield],
-  ['factions', 'Factions', Landmark],
-  ['relationships', 'Relationships', Network],
-  ['threads', 'Plot Threads', GitBranch],
-  ['themes', 'Themes', Sparkles],
-  ['mysteries', 'Mysteries', Lightbulb],
-  ['readiness', 'Readiness', ClipboardCheck],
-  ['knowledge', 'Knowledge', Eye],
-  ['knowledge-graph', 'Knowledge Graph', Network],
-  ['timeline', 'Timeline', Clock3],
-  ['arcs', 'Arcs', ListTree],
-  ['arc-development', 'Arc Development', ClipboardCheck],
-  ['questions', 'Questions', CircleHelp],
-  ['insights', 'AI Insights', Brain],
-  ['drafting', 'Drafting', PenLine],
-  ['editorial', 'Editorial', FileSearch],
-  ['manuscript', 'Manuscript', BookOpen],
-  ['canon', 'Canon', Shield],
-  ['canon-queue', 'Canon Queue', ClipboardCheck],
-  ['project-timeline', 'Project Timeline', Clock3],
-  ['explainability-timeline', 'Story Health History', Activity],
-  ['workflow', 'Workflow', Play],
-  ['settings', 'Settings', Settings],
-] as const
-
-const navItems = [
-  { id: 'dashboard', label: 'Dashboard', Icon: Activity },
-  { id: 'story-studio', label: 'Story Studio', Icon: MessageSquare },
-  { id: 'writing', label: 'Writing', Icon: PenLine },
-  { id: 'assistant', label: 'AI Guidance', Icon: Brain },
-  { id: 'toolbox', label: 'Toolbox', Icon: ListTree },
-  { id: 'settings', label: 'Settings', Icon: Settings },
-]
-
-const sectionDefinitions = new Map<string, { label: string; Icon: typeof Activity }>(
-  sections.map(([id, label, Icon]) => [id, { label, Icon }]),
-)
-const workspaceDestinations = new Set(['dashboard', ...sections.map(([id]) => id)])
-
+const workspaceDestinations = new Set(['dashboard', ...ALL_SECTION_IDS])
 
 function TraceLine({ item }: { item?: Record<string, unknown> | null }) {
   void item
   return null
 }
 
-function ListBlock({ title, values }: { title: string; values?: unknown }) {
+function ListBlock({ title, values, hideEmpty = false }: { title: string; values?: unknown; hideEmpty?: boolean }) {
   const items = asArray(values)
+  if (hideEmpty && items.length === 0) return null
   return (
-    <div className="min-w-0 rounded-md border p-3">
-      <h3 className="truncate text-sm font-semibold">{title}</h3>
-      <div className="mt-2 flex flex-wrap gap-2 text-sm">
+    <div className="min-w-0 rounded-lg bg-muted/50 p-3">
+      <h3 className="truncate text-xs font-medium text-muted-foreground">{title}</h3>
+      <div className="mt-2 flex flex-wrap gap-1.5 text-sm">
         {items.length === 0 ? <span className="text-muted-foreground">None yet</span> : items.map((value, index) => (
-          <span key={index} className="max-w-full break-words rounded bg-muted px-2 py-1">{formatValue(value)}</span>
+          <span key={index} className="max-w-full break-words rounded-md border bg-background px-2 py-0.5">{formatValue(value)}</span>
         ))}
       </div>
     </div>
@@ -186,9 +112,10 @@ export default function ProjectWorkspacePage() {
       window.history.pushState({ section: destination }, '', url)
     }
   }, [])
-  const [toolboxOpen, setToolboxOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const [lastSectionByStep, setLastSectionByStep] = useState<Partial<Record<StepId, string>>>({})
   const [assistantOpen, setAssistantOpen] = useState(false)
-  const [companionLayout, setCompanionLayout] = useState<{ open: boolean; dock: 'left' | 'right' }>({ open: false, dock: 'right' })
   const [assistantInitialTab, setAssistantInitialTab] = useState<'assistant' | 'intelligence'>('assistant')
   const [developerMode, setDeveloperMode] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
@@ -196,13 +123,6 @@ export default function ProjectWorkspacePage() {
   const [applicationKnowledge, setApplicationKnowledge] = useState<ApplicationKnowledge | null>(null)
   const [writingState, setWritingState] = useState<WritingState | null>(null)
   const [editorialFocusDraftId, setEditorialFocusDraftId] = useState<string | null>(null)
-  const [recentSections, setRecentSections] = useState<string[]>([])
-  // The first entry is the current section; "dashboard" has no sidebar entry.
-  // Filter before rendering so an empty "Recent" heading is never shown.
-  const visibleRecentSections = useMemo(
-    () => recentSections.slice(1).filter((id) => sectionDefinitions.has(id)),
-    [recentSections],
-  )
   const [customAnswers, setCustomAnswers] = useState<Record<string, string>>({})
   const [proposalAction, setProposalAction] = useState<{ messageId: string; action: string; note: string } | null>(null)
   const [storyKnowledgeCandidates, setStoryKnowledgeCandidates] = useState<any[]>([])
@@ -216,12 +136,6 @@ export default function ProjectWorkspacePage() {
     audience: '',
     narrative_goals: '',
   })
-  const handleCompanionOpenChange = useCallback((open: boolean, dock: 'left' | 'right') => {
-    setCompanionLayout((current) => (
-      current.open === open && current.dock === dock ? current : { open, dock }
-    ))
-  }, [])
-
   useEffect(() => {
     const handleHistoryNavigation = () => {
       const requested = new URLSearchParams(window.location.search).get('section') || 'dashboard'
@@ -247,33 +161,23 @@ export default function ProjectWorkspacePage() {
   }, [section])
 
   useEffect(() => {
-    setToolboxOpen(window.innerWidth >= 1024)
-  }, [])
-  useEffect(() => {
     let active = true
     dataApi.getApplicationKnowledge(projectId).then((value) => active && setApplicationKnowledge(value)).catch(() => undefined)
     return () => { active = false }
   }, [projectId])
   useEffect(() => {
-    let active = true
-    dataApi.getWritingState(projectId).then((value) => active && setWritingState(value as WritingState)).catch(() => active && setWritingState(null))
-    return () => { active = false }
-  }, [projectId])
+    const step = stepForSection(section)
+    setLastSectionByStep((current) => (current[step.id] === section ? current : { ...current, [step.id]: section }))
+    if (step.id === 'more') setMoreOpen(true)
+    setMobileNavOpen(false)
+  }, [section])
+  // Writing state feeds the progress bar; refresh it whenever chapters change.
+  const chapterSignature = useProjectStore((state) => state.chapterDrafts.map((draft) => `${draft.draft_id}:${draft.status}`).join('|'))
   useEffect(() => {
-    const storageKey = `novelforge:recent-sections:${projectId}`
-    setRecentSections((current) => {
-      const previous = current.length ? current : (() => {
-        try {
-          return JSON.parse(window.localStorage.getItem(storageKey) || '[]') as string[]
-        } catch {
-          return []
-        }
-      })()
-      const next = [section, ...previous.filter((item) => item !== section)].slice(0, 4)
-      window.localStorage.setItem(storageKey, JSON.stringify(next))
-      return next
-    })
-  }, [projectId, section])
+    let active = true
+    dataApi.getWritingState(projectId).then((value) => active && setWritingState(value as WritingState)).catch(() => undefined)
+    return () => { active = false }
+  }, [projectId, chapterSignature, section])
   const {
     selectedProject,
     currentRun,
@@ -459,10 +363,55 @@ export default function ProjectWorkspacePage() {
     return null
   }, [currentRun])
 
+  const visibleCharacters = useMemo(() => characterBibles.filter((item) => item.authority_status !== 'candidate'), [characterBibles])
+  const visibleThreads = useMemo(() => plotThreads.filter((item) => item.authority_status !== 'candidate'), [plotThreads])
+  const blockingQuestionCount = useMemo(() => questions.filter((question) => !question.answered && question.blocking).length, [questions])
+  const openQuestionCount = useMemo(() => questions.filter((question) => !question.answered).length, [questions])
+  const latestManuscript = manuscripts[0] as { status?: string } | undefined
+  const progressInput = {
+    writingState,
+    hasPremise: Boolean((storyVision?.premise || selectedProject?.premise || selectedProject?.idea_dump || '').trim()),
+    characterCount: visibleCharacters.length,
+    arcCount: storyArcs.length,
+    plannedChapters: totalEstimated || chapterPlans.length,
+    pendingFacts: storyKnowledgeCandidates.length,
+    blockingQuestions: blockingQuestionCount,
+    manuscriptStatus: latestManuscript?.status || null,
+  }
+  const progress = computeBookProgress(progressInput)
+  const nextStep = computeNextStep(progress, progressInput)
+  const activeStep = stepForSection(section)
+  const goToStep = useCallback((stepId: StepId) => {
+    const step = stepById(stepId)
+    setSection(lastSectionByStep[stepId] || step.sections[0].id)
+  }, [lastSectionByStep, setSection])
+  const developStory = useCallback(() => { void runWorkflow(projectId) }, [projectId, runWorkflow])
+
   const renderSection = () => {
     switch (section) {
       case 'story-studio':
-        return <Panel title="Story Studio" testId="story-studio-workspace"><StoryStudioPanel projectId={projectId} onNavigate={setSection} onChanged={refreshAuthorWorkspace} /></Panel>
+        return <Panel title="Story chat" testId="story-studio-workspace"><StoryStudioPanel projectId={projectId} onNavigate={setSection} onChanged={refreshAuthorWorkspace} /></Panel>
+      case 'write-next':
+        return <Panel title="Write next chapter" testId="write-next-panel"><StoryStudioPanel key="write-next" projectId={projectId} initialTab="write" hideTabs onNavigate={setSection} onChanged={refreshAuthorWorkspace} /></Panel>
+      case 'facts': {
+        const factTypes = Array.from(new Set(storyKnowledgeCandidates.map((candidate) => String(candidate.type))))
+        return (
+          <Panel title="Facts to confirm" testId="facts-panel">
+            {storyKnowledgeCandidates.length === 0 ? (
+              <EmptyState
+                icon={<CheckCircle2 className="h-5 w-5" />}
+                title="Nothing to confirm right now"
+                description="When you approve a chapter, the AI picks out new characters, places, relationships and mysteries. They appear here for you to confirm or reject."
+                action={<Button variant="outline" onClick={() => setSection('writing')}>Go to chapters</Button>}
+              />
+            ) : (
+              <>
+                <KnowledgeSuggestionsPanel projectId={projectId} candidates={storyKnowledgeCandidates} types={factTypes} onChanged={refreshAuthorWorkspace} />
+              </>
+            )}
+          </Panel>
+        )
+      }
       case 'writing':
         return <Panel title="Writing" testId="writing-workspace-panel"><WritingWorkspace projectId={projectId} onNavigate={setSection} onEditChapter={(draftId) => { setEditorialFocusDraftId(draftId); setSection('editorial') }} /></Panel>
       case 'vision':
@@ -668,10 +617,10 @@ export default function ProjectWorkspacePage() {
             <StartYourNovel
               projectId={projectId}
               autoOpen
-              onNavigate={(target) => { setSection(target); setToolboxOpen(false) }}
+              onNavigate={(target) => { setSection(target); setMobileNavOpen(false) }}
               onChanged={refreshAuthorWorkspace}
             />
-            <NarrativeProductionPipeline projectId={projectId} showGuide onNavigate={(target) => { setSection(target); setToolboxOpen(false) }} />
+            <NarrativeProductionPipeline projectId={projectId} showGuide onNavigate={(target) => { setSection(target); setMobileNavOpen(false) }} />
           </div>
         )
       case 'characters':
@@ -690,15 +639,16 @@ export default function ProjectWorkspacePage() {
               {characterBibles.filter((item) => item.authority_status !== 'candidate').map((character, index) => {
                 const journey = characterJourneys.find((item) => item.character_name === character.name)
                 return (
-                <div key={`${character.name}-${index}`} className="min-w-0 rounded-md border p-3 text-sm">
+                <div key={`${character.name}-${index}`} className="min-w-0 space-y-2 rounded-xl border bg-card p-4 text-sm shadow-soft">
                   <h3 className="truncate font-semibold">{character.name}</h3>
                   <p className="text-muted-foreground">{character.role || character.current_status || 'Status not set'}</p>
                   <p className="mt-2 break-words">{character.description || journey?.growth || character.current_arc_state || 'No persisted description.'}</p>
-                  <ListBlock title="Goals" values={character.goals} />
-                  <ListBlock title="Fears" values={character.fears} />
-                  <ListBlock title="Future Payoffs" values={character.future_payoffs || journey?.future_plans} />
+                  <ListBlock hideEmpty title="Goals" values={character.goals} />
+                  <ListBlock hideEmpty title="Fears" values={character.fears} />
+                  <ListBlock hideEmpty title="Payoffs to come" values={character.future_payoffs || journey?.future_plans} />
                   <ListBlock
-                    title="Arc Progression"
+                    hideEmpty
+                    title="How they change"
                     values={characterProgressions
                       .filter((item) => item.character === character.name)
                       .map((item) => `${storyArcs.find((arc) => arc.arc_id === item.arc_id)?.title || item.arc_id}: ${item.current_state} -> ${item.desired_state}`)}
@@ -1093,316 +1043,189 @@ export default function ProjectWorkspacePage() {
     }
   }
 
+  const stepInfo = activeStep
+  const currentSection = sectionInfo(section)
+  const isMoreTool = stepInfo.id === 'more'
+  const headerTitle = isMoreTool ? currentSection?.label || stepInfo.title : stepInfo.title
+  const headerDescription = isMoreTool ? currentSection?.description : stepInfo.description
+  const stepActions = stepInfo.id === 'plan' ? (
+    <Button onClick={developStory} disabled={busy} data-testid="run-workflow" className="gap-2">
+      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+      {runIsActive ? 'AI is planning…' : 'Let AI build the plan'}
+    </Button>
+  ) : stepInfo.id === 'write' && section !== 'write-next' ? (
+    <Button onClick={() => setSection('write-next')} className="gap-2" data-testid="write-next-chapter">
+      <PenLine className="h-4 w-4" />{progress.chaptersWritten ? `Write Chapter ${progress.nextChapter}` : 'Write Chapter 1'}
+    </Button>
+  ) : null
+  const bookTitle = selectedProject?.story_title || selectedProject?.project_name || selectedProject?.title || 'Your novel'
+
   return (
-    <main className="min-h-screen overflow-x-hidden bg-background text-foreground transition-colors duration-300">
-      <div className="flex h-screen min-w-0 overflow-hidden">
-        {/* Leftmost Navigation Sidebar */}
-        <aside className="flex w-16 shrink-0 flex-col items-center border-r bg-card py-4">
-          <div className="mb-8 flex flex-col items-center">
-            <Link href="/projects" className="text-xs font-bold text-primary hover:underline">
-              Projects
-            </Link>
-          </div>
-          <nav className="flex flex-1 flex-col gap-4">
-            {navItems.map(({ id, label, Icon }) => {
-              const active = id === 'toolbox' 
-                ? toolboxOpen 
-                : id === 'assistant' 
-                  ? assistantOpen 
-                  : section === id && !toolboxOpen;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    if (id === 'toolbox') {
-                      setToolboxOpen(!toolboxOpen);
-                    } else if (id === 'assistant') {
-                      setAssistantInitialTab('assistant')
-                      setAssistantOpen(!assistantOpen);
-                    } else {
-                      setSection(id);
-                    }
-                  }}
-                  title={label}
-                  aria-label={label}
-                  className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all ${
-                    active 
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105' 
-                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                  }`}
-                  data-testid={`nav-${id}`}
-                >
-                  <Icon className="h-5 w-5" />
-                </button>
-              );
-            })}
-          </nav>
-          <div className="mt-auto">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center text-xs font-semibold text-white">
-              NF
-            </div>
-          </div>
-        </aside>
+    <div className="flex h-screen min-w-0 overflow-hidden bg-background text-foreground">
+      <WorkspaceSidebar
+        projectName={selectedProject?.project_name || selectedProject?.title || 'Project'}
+        activeStep={stepInfo.id}
+        activeSection={section}
+        progress={progress}
+        badges={{ plan: blockingQuestionCount, write: progress.chaptersInReview, review: progress.pendingFacts }}
+        moreOpen={moreOpen}
+        onToggleMore={() => setMoreOpen((value) => !value)}
+        onStep={goToStep}
+        onNavigate={setSection}
+        mobileOpen={mobileNavOpen}
+        onCloseMobile={() => setMobileNavOpen(false)}
+      />
 
-        {/* Toolbox Drawer Panel (Slides open next to sidebar if toggled) */}
-        {toolboxOpen && (
-          <aside className="w-64 border-r bg-card flex flex-col shrink-0">
-            <div className="p-4 border-b">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Toolbox</h2>
-            </div>
-            <nav className="flex-1 overflow-y-auto p-2">
-              {visibleRecentSections.length > 0 ? (
-                <div className="mb-3 border-b pb-3" data-testid="recent-destinations">
-                  <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Recent</p>
-                  {visibleRecentSections.map((id) => {
-                    const definition = sectionDefinitions.get(id)!
-                    const RecentIcon = definition.Icon
-                    return <button key={id} type="button" onClick={() => setSection(id)} className="mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-accent/50"><RecentIcon className="h-3.5 w-3.5" /><span className="truncate">{definition.label}</span></button>
-                  })}
-                </div>
-              ) : null}
-              {(applicationKnowledge
-                ? Object.entries(applicationKnowledge.groups).map(([group, ids]) => ({
-                    group,
-                    items: ids.map((id) => ({ id, definition: sectionDefinitions.get(id) })).filter((item) => item.definition),
-                  })).filter((group) => group.items.length)
-                : [{ group: 'Workspace', items: sections.map(([id, label, Icon]) => ({ id, definition: { label, Icon } })) }]
-              ).map(({ group, items }) => {
-                const groupContent = <div className="mb-3">
-                  <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{group}</p>
-                  {items.map(({ id, definition }) => {
-                    const { label, Icon } = definition!
-                    return (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => {
-                      setSection(id);
-                    }}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                      section === id 
-                        ? 'bg-accent text-accent-foreground font-medium' 
-                        : 'hover:bg-accent/50 text-muted-foreground'
-                    }`}
-                    data-testid={`section-${id}`}
-                  >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{label}</span>
-                  </button>
-                    )
-                  })}
-                </div>
-                if (group !== 'More Tools') return <div key={group}>{groupContent}</div>
-                return (
-                  <details key={group} className="rounded-lg border border-dashed" data-testid="advanced-tools">
-                    <summary className="cursor-pointer list-none px-3 py-3 text-xs font-semibold text-muted-foreground">More tools and project details</summary>
-                    {groupContent}
-                  </details>
-                )
-              })}
-            </nav>
-          </aside>
-        )}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <BookProgressBar
+          progress={progress}
+          onOpenMenu={() => setMobileNavOpen(true)}
+          onAsk={() => { setAssistantInitialTab('assistant'); setAssistantOpen(true) }}
+          onStep={goToStep}
+        />
 
-        {/* Main Workspace Viewport */}
-        <section data-testid="workspace-main-viewport" className={`flex-1 min-w-0 flex flex-col overflow-y-auto bg-background transition-[padding] duration-200 ${
-          companionLayout.open
-            ? companionLayout.dock === 'right'
-              ? toolboxOpen ? 'workspace-companion-safe-right-constrained' : 'workspace-companion-safe-right'
-              : toolboxOpen ? 'workspace-companion-safe-left-constrained' : 'workspace-companion-safe-left'
-            : ''
-        }`}>
-          <header className="px-3 py-3 sm:px-6 sm:py-4 border-b flex items-center justify-between shrink-0 gap-2">
-            <div className="min-w-0">
-              <h1 className="min-w-0 text-base sm:text-xl font-bold flex items-center gap-2">
-                <span className="truncate">{selectedProject?.project_name || selectedProject?.title || 'Project Workspace'}</span>
-                <span className="hidden xl:inline-flex text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border">
-                  Author-controlled story workspace
-                </span>
-              </h1>
-              <p className="mt-1 truncate text-xs text-muted-foreground" data-testid="story-title-label">
-                Novel: {selectedProject?.story_title || 'Untitled'}
-              </p>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground" data-testid="workspace-breadcrumb">
-                Project / {activeWorkflowGroup} / {section === 'dashboard' ? 'Dashboard' : sectionDefinitions.get(section)?.label || 'Workspace'}
-              </p>
-              {runStatusLabel && (
-                <p className="text-xs text-muted-foreground mt-0.5 truncate" data-testid="run-status">
-                  {runStatusLabel}
-                </p>
-              )}
-            </div>
-            {/* Quick Actions in Header */}
-            <div className="flex gap-2 shrink-0">
-              <Button size="sm" variant="outline" onClick={() => runWorkflow(projectId)} disabled={busy} data-testid="run-workflow">
-                {busy ? <Loader2 className="h-4 w-4 animate-spin sm:mr-2" /> : <Play className="h-4 w-4 sm:mr-2" />}
-                <span className="hidden sm:inline">{runIsActive ? 'Developing Story' : 'Develop Story'}</span>
-              </Button>
-            </div>
-          </header>
+        <main data-testid="workspace-main-viewport" className="min-w-0 flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-8">
+            <OperationFailureBanner
+              failure={operationFailure}
+              developerMode={developerMode}
+              onRetry={retryOperationFailure}
+              onDismiss={dismissOperationFailure}
+              onNavigate={(target) => setSection(target)}
+            />
+            {runStatusLabel ? <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground" data-testid="run-status">{runIsActive ? <Loader2 className="h-3 w-3 animate-spin" /> : null}{runStatusLabel}</p> : null}
 
-          <PageGuidance
-            surface={applicationKnowledge?.surfaces[section === 'editor' ? 'drafting' : section] || {
-              surface_id: section,
-              label: section === 'dashboard' ? 'Dashboard' : sectionDefinitions.get(section)?.label || 'Workspace',
-              group: activeWorkflowGroup,
-              aliases: [],
-              purpose: 'Understand this workspace, its current status, and the next useful author action.',
-              why_it_matters: 'Each workspace supports one part of planning, writing, reviewing, or publishing your novel.',
-              what_to_do: 'Review the current information and follow the highlighted next action.',
-              what_happens_next: 'NovelForge will preserve your work and guide you to the next connected step.',
-              actions: [],
-            }}
-            onNavigate={(target) => { setSection(target); setToolboxOpen(false) }}
-            onAsk={() => { setAssistantInitialTab('assistant'); setAssistantOpen(true) }}
-          />
-
-          <OperationFailureBanner
-            failure={operationFailure}
-            developerMode={developerMode}
-            onRetry={retryOperationFailure}
-            onDismiss={dismissOperationFailure}
-            onNavigate={(target) => { setSection(target); setToolboxOpen(false) }}
-          />
-
-          <WorkspaceIntelligenceBanner
-            projectId={projectId}
-            surface={section}
-            onExplain={() => {
-              setAssistantInitialTab('intelligence')
-              setAssistantOpen(true)
-            }}
-            onNavigate={(target) => { setSection(target); setToolboxOpen(false) }}
-          />
-
-          <div className="flex-1 p-3 sm:p-6 overflow-y-auto">
             {section === 'dashboard' ? (
-              <div className="space-y-6" data-testid="primary-project-dashboard">
-                <Dashboard
-                  project={selectedProject}
-                  storyHealth={storyHealth}
-                  storyRoom={storyRoom}
-                  storyArcs={storyArcs}
-                  questions={questions}
-                  readinessReports={readinessReports}
-                  aiInsights={aiInsights}
-                  currentRun={currentRun}
-                  hasScenePlan={scenes.length > 0}
-                  activeDraftStatus={sceneDrafts.find((draft) => draft.active)?.status}
-                  onRunCycle={() => runWorkflow(projectId)}
-                  onNavigate={(s) => { setSection(s as typeof section); setToolboxOpen(false) }}
-                  busy={busy}
-                  writingState={writingState}
-                  onProjectUpdated={(project) => setSelectedProject(project)}
-                />
-              </div>
+              <BookOverview
+                bookTitle={bookTitle}
+                premise={storyVision?.premise || selectedProject?.premise || selectedProject?.idea_dump}
+                progress={progress}
+                nextStep={nextStep}
+                counts={{ characters: visibleCharacters.length, arcs: storyArcs.length, threads: visibleThreads.length, openQuestions: openQuestionCount }}
+                currentRun={currentRun}
+                busy={busy}
+                writingState={writingState}
+                manuscriptStatus={latestManuscript?.status || null}
+                onNavigate={setSection}
+                onStep={goToStep}
+                onDevelop={developStory}
+                setup={<StartYourNovel projectId={projectId} onNavigate={(target) => setSection(target)} onChanged={refreshAuthorWorkspace} />}
+                guidance={(
+                  <WorkspaceIntelligenceBanner
+                    projectId={projectId}
+                    surface={section}
+                    onExplain={() => {
+                      setAssistantInitialTab('intelligence')
+                      setAssistantOpen(true)
+                    }}
+                    onNavigate={(target) => setSection(target)}
+                  />
+                )}
+              />
             ) : (
-              <div className="animate-in fade-in duration-200">
-                {renderSection()}
-              </div>
+              <>
+                <PageHeader
+                  eyebrow={stepInfo.number ? `Step ${stepInfo.number} of 4` : isMoreTool ? 'More tools' : undefined}
+                  title={headerTitle}
+                  description={headerDescription}
+                  actions={stepActions}
+                />
+                <StepTabs
+                  step={stepInfo}
+                  activeSection={section}
+                  onNavigate={setSection}
+                  counts={{ questions: blockingQuestionCount, writing: progress.chaptersInReview, facts: progress.pendingFacts }}
+                />
+                {!isMoreTool && stepInfo.sections.length > 1 && currentSection ? <p className="mt-4 text-sm text-muted-foreground" data-testid="section-description">{currentSection.description}</p> : null}
+                <div className="mt-5 animate-in fade-in duration-200">
+                  {renderSection()}
+                </div>
+                {!isMoreTool && stepInfo.id !== 'settings' ? <NextStepFooter step={stepInfo} onStep={goToStep} /> : null}
+              </>
             )}
           </div>
-        </section>
-
-        {commandOpen ? (
-          <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/50 px-4 pt-[12vh]" role="presentation" onMouseDown={(event) => {
-            if (event.currentTarget === event.target) setCommandOpen(false)
-          }}>
-            <section className="w-full max-w-2xl overflow-hidden rounded-xl border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-label="Navigate NovelForge">
-              <div className="flex items-center gap-2 border-b p-3">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <Input
-                  autoFocus
-                  value={commandQuery}
-                  onChange={(event) => setCommandQuery(event.target.value)}
-                  placeholder="Go to Story Health, Canon Queue, Timeline…"
-                  className="border-0 shadow-none focus-visible:ring-0"
-                  data-testid="workspace-command-search"
-                />
-                <kbd className="rounded border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">Esc</kbd>
-              </div>
-              <div className="max-h-[55vh] overflow-y-auto p-2">
-                {(applicationKnowledge
-                  ? Object.entries(applicationKnowledge.surfaces).map(([id, surface]) => ({ id, label: surface.label, purpose: surface.purpose }))
-                  : [
-                      { id: 'dashboard', label: 'Dashboard', purpose: 'Review project health and next actions.' },
-                      ...sections.map(([id, label]) => ({ id, label, purpose: '' })),
-                    ]
-                )
-                  .filter((item) => {
-                    const term = commandQuery.trim().toLowerCase()
-                    return !term || `${item.label} ${item.purpose}`.toLowerCase().includes(term)
-                  })
-                  .slice(0, 18)
-                  .map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className="flex w-full items-start justify-between gap-4 rounded-lg px-3 py-2.5 text-left hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      onClick={() => {
-                        setSection(item.id)
-                        setToolboxOpen(false)
-                        setCommandOpen(false)
-                        setCommandQuery('')
-                      }}
-                    >
-                      <span><strong className="block text-sm">{item.label}</strong>{item.purpose ? <span className="mt-0.5 block line-clamp-1 text-xs text-muted-foreground">{item.purpose}</span> : null}</span>
-                      <span className="text-xs text-muted-foreground">Open</span>
-                    </button>
-                  ))}
-              </div>
-            </section>
-          </div>
-        ) : null}
-
-        {/* AI Assistant Persistent Side-Drawer Overlay (Right aligned) */}
-        {assistantOpen && (
-          <aside className="fixed inset-x-0 inset-y-0 z-40 flex min-w-0 flex-col overflow-hidden border-l bg-card shadow-2xl animate-in slide-in-from-right duration-200 sm:left-auto sm:right-0 sm:w-[min(92vw,30rem)]" data-testid="interactive-assistant-drawer">
-            <div className="p-4 border-b flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">AI Narrative Companion</h2>
-                <p className="text-xs text-muted-foreground">Ask, explore, and navigate the story</p>
-              </div>
-              <button type="button" aria-label="Close AI narrative companion" onClick={() => setAssistantOpen(false)} className="text-muted-foreground hover:text-foreground">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
-              <InteractiveNarrativeStudio
-                projectId={projectId}
-                characters={characterBibles}
-                activeSurface={section}
-                initialTab={assistantInitialTab}
-                compact
-                onNavigate={(target) => {
-                  setSection(target)
-                  setAssistantOpen(false)
-                  setToolboxOpen(false)
-                }}
-                onRefresh={() => fetchProject(projectId)}
-              />
-            </div>
-          </aside>
-        )}
-        <WorkspaceCompanion
-          projectId={projectId}
-          activeSurface={section}
-          refreshKey={`${sceneDrafts.length}:${sceneDrafts.map((item) => `${item.draft_id}:${item.status}`).join('|')}:${revisionVersions.length}`}
-          onNavigate={(target) => { setSection(target); setToolboxOpen(false) }}
-          onAsk={() => { setAssistantInitialTab('assistant'); setAssistantOpen(true) }}
-          onOpenChange={handleCompanionOpenChange}
-          constrained={toolboxOpen}
-        />
+        </main>
       </div>
-    </main>
+
+      {commandOpen ? (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-[12vh]" role="presentation" onMouseDown={(event) => {
+          if (event.currentTarget === event.target) setCommandOpen(false)
+        }}>
+          <section className="w-full max-w-2xl overflow-hidden rounded-xl border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-label="Go to a page">
+            <div className="flex items-center gap-2 border-b p-3">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <Input
+                autoFocus
+                value={commandQuery}
+                onChange={(event) => setCommandQuery(event.target.value)}
+                placeholder="Go to Characters, Story check, Book & export…"
+                className="border-0 shadow-none focus-visible:ring-0"
+                data-testid="workspace-command-search"
+              />
+              <kbd className="rounded border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">Esc</kbd>
+            </div>
+            <div className="max-h-[55vh] overflow-y-auto p-2">
+              {STEPS.flatMap((step) => step.sections.map((item) => ({ ...item, stepLabel: step.label })))
+                .filter((item) => {
+                  const term = commandQuery.trim().toLowerCase()
+                  const legacy = applicationKnowledge?.surfaces[item.id]?.label || ''
+                  return !term || `${item.label} ${item.description} ${item.stepLabel} ${legacy}`.toLowerCase().includes(term)
+                })
+                .slice(0, 18)
+                .map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="flex w-full items-start justify-between gap-4 rounded-lg px-3 py-2.5 text-left hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => {
+                      setSection(item.id)
+                      setCommandOpen(false)
+                      setCommandQuery('')
+                    }}
+                  >
+                    <span><strong className="block text-sm font-medium">{item.label}</strong><span className="mt-0.5 block line-clamp-1 text-xs text-muted-foreground">{item.description}</span></span>
+                    <span className="shrink-0 text-xs text-muted-foreground">{item.stepLabel}</span>
+                  </button>
+                ))}
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {assistantOpen && (
+        <aside className="fixed inset-x-0 inset-y-0 z-40 flex min-w-0 flex-col overflow-hidden border-l bg-card shadow-2xl animate-in slide-in-from-right duration-200 sm:left-auto sm:right-0 sm:w-[min(92vw,30rem)]" data-testid="interactive-assistant-drawer">
+          <div className="flex items-center justify-between border-b p-4">
+            <div>
+              <h2 className="text-base font-semibold">Ask AI</h2>
+              <p className="text-xs text-muted-foreground">Ask about your story or where to find something</p>
+            </div>
+            <button type="button" aria-label="Close AI assistant" onClick={() => setAssistantOpen(false)} className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
+            <InteractiveNarrativeStudio
+              projectId={projectId}
+              characters={characterBibles}
+              activeSurface={section}
+              initialTab={assistantInitialTab}
+              compact
+              onNavigate={(target) => {
+                setSection(target)
+                setAssistantOpen(false)
+              }}
+              onRefresh={() => fetchProject(projectId)}
+            />
+          </div>
+        </aside>
+      )}
+    </div>
   )
 }
 
 function Panel({ title, testId, children }: { title: string; testId: string; children: ReactNode }) {
   return (
-    <section className="min-w-0 rounded-md border bg-card p-4" data-testid={testId}>
-      <h2 className="mb-4 truncate text-xl font-semibold">{title}</h2>
+    <section className="min-w-0" data-testid={testId} aria-label={title}>
       {children}
     </section>
   )
