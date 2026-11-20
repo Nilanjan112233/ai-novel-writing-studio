@@ -17,11 +17,34 @@ Bible) in a database, and send the model only the facts that matter for the
 chapter being written.** The author approves what goes into that memory, so
 the AI cannot quietly change the story's facts.
 
+## What the author sees
+
+The project workspace is one guided path, numbered in the sidebar:
+**Overview → 1 Plan → 2 Write → 3 Review → 4 Finish**. Each step is a page
+with tabs for its parts (Plan has Story idea, Characters, World, Plot threads,
+Mysteries, Story arcs, Timeline, Questions). Specialist tools (story rules,
+story map, AI activity, history and so on) sit under a collapsed **More
+tools** group, so a new author never has to learn them.
+
+- A **progress bar** at the top of every project page shows the current stage,
+  chapters approved against the number planned in the story arcs, and the
+  total word count.
+- **Overview** shows one "next step" card. `computeNextStep()` in
+  `frontend/lib/bookProgress.ts` picks it in a fixed order: answer blocking
+  questions, build the plan, read chapters waiting for approval, confirm new
+  facts, write the next chapter, then assemble and export the book.
+- Every step page ends with a "Next: ..." link to the following step.
+- The navigation model lives in `frontend/lib/workspaceNav.ts`. Every older
+  section id (`?section=canon`, `?section=drafting`, ...) still resolves to a
+  tab or a More-tools page, so links and the Ctrl+K palette keep working.
+
+The audit behind this layout is in [UX_REDESIGN_PLAN.md](UX_REDESIGN_PLAN.md).
+
 ## The main flow, step by step
 
 ```mermaid
 flowchart TD
-    A[Author creates a project<br/>title, idea, genre, tone] --> B[Plan<br/>Develop Story agents fill characters, world, arcs]
+    A[Author creates a project<br/>title, idea, genre, tone] --> B[Plan<br/>planning agents suggest characters, world, arcs]
     B --> C[Write a chapter<br/>instruction + word range]
     C --> D[Context builder<br/>Story Bible + relevant past chapters]
     D --> E[Provider gateway<br/>calls the chosen AI model]
@@ -96,8 +119,8 @@ fails or returns nothing, a simple rule-based extractor is used instead, so the
 step never blocks the author.
 
 `story_knowledge_projection_service.py` saves those candidates with
-`authority_status: "candidate"`. They show up in Story Studio as
-*Suggestions for your story* with **Confirm** / **Not a story fact** buttons.
+`authority_status: "candidate"`. They show up under **Review → Facts to
+confirm** with **Confirm** / **Not a story fact** buttons.
 Only confirmed facts become part of the Story Bible and are sent to the AI
 next time. This is the "human in the loop" part of the design.
 
@@ -215,6 +238,15 @@ another provider; lists are now accepted where the caller expects one.
 manuscript. (4) Writing calls were traced without a project ID, so
 per-project cost reports left them out. Each fix has a regression test that
 runs on the mock.
+
+**Why was the interface redesigned?**
+The first version exposed every internal feature at once: 32 sections in a
+toolbox, three stacked guidance banners and a floating assistant. Authors
+could not tell where they were or what to do next. The redesign groups the
+same features into the five steps of writing a book, adds a progress bar and
+one "next step" card, and uses writers' words ("Facts to confirm", "Story
+check", "Book & export") instead of system words ("canon", "audit",
+"manuscript governance"). No backend API changed.
 
 **Why MongoDB and not PostgreSQL?**
 The data is document-shaped and varies a lot between record types, and the API
